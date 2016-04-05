@@ -3,6 +3,18 @@ body {
     padding-bottom: 20px;
 }
 
+textarea, input {
+  padding:10px;
+  font-family: FontAwesome, "Open Sans", Verdana, sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: inherit;
+}
+
+tr.noBorder td {
+  border: 0 !Important; 
+}
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
