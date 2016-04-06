@@ -7,13 +7,24 @@
  * Controller of the sbAdminApp
  */
 angular.module('sbAdminApp')
-  .controller('ChartCtrl', ['$scope', '$timeout', function ($scope, $timeout, ModalService) {
+  .controller('ChartCtrl', ['$scope', '$timeout', '$http', 'employeeService', function ($scope, $timeout, $http, employeeService) {
 
-    var firstnames = ['Laurent', 'Blandine', 'Olivier', 'Max'];
-    var lastnames = ['Renard', 'Faivre', 'Frere', 'Eponge'];
-    var gender = ['Female', 'Male', 'Female', 'Male'];
-    var id = 1;
+    function getAll(){
+      employeeService.getEmployees()
+      .then(function(results) {
+        // Handle the result
 
+        $scope.rowCollection = results;
+        return results;
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      }, function(percentComplete) {
+        console.log(percentComplete);
+      });
+    };
+
+    getAll();
     $scope.user = {
       'firstName' : '',
       'lastName' : '',
@@ -30,20 +41,26 @@ angular.module('sbAdminApp')
 
     $scope.addUser = function(){
 
-      var userData = {
-        firstName : $scope.user.firstName,
-        lastName : $scope.user.lastName,
-        gender : $scope.user.gender,
-        age : $scope.user.age,
-        id : id
-      };
+      var Employee = Parse.Object.extend("Employee");
+      var employee = new Employee();
 
-      $scope.rowCollection.push(userData);
+      employee.set("firstName", $scope.user.firstName);
+      employee.set("lastName", $scope.user.lastName);
+      employee.set("gender", $scope.user.gender);
+      employee.set("age", $scope.user.age);
 
-      id++;
+      employee.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          getAll();
+          console.log(result);
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          // error is a Parse.Error with an error code and message.
+        }
+      });
     };
-
-    $scope.rowCollection = [];
 
     //remove to the real data holder
     $scope.removeItem = function removeItem(row) {

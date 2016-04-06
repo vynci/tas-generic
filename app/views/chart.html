@@ -26,7 +26,7 @@
                   </i> Add User
                   </button>
                 </td>
-                <td>
+                <td colspan="1">
                   <select class="form-control" id="sel1">
                     <option>Sort By Id</option>
                     <option>2</option>
@@ -34,7 +34,7 @@
                     <option>4</option>
                   </select>
                 </td>
-                <td colspan="2"><input st-search="" class="form-control" placeholder="&#xf002; Search" type="text"/></td>
+                <td colspan="1"><input st-search="" class="form-control" placeholder="&#xf002; Search" type="text"/></td>
               </tr>
 
               <tr>
@@ -47,10 +47,10 @@
             </thead>
             <tbody>
               <tr ng-repeat="row in displayedCollection">
-                <td>{{row.firstName}}</td>
-                <td>{{row.lastName}}</td>
-                <td>{{row.gender}}</td>
-                <td>{{row.age}}</td>
+                <td>{{row.attributes.firstName}}</td>
+                <td>{{row.attributes.lastName}}</td>
+                <td>{{row.attributes.gender}}</td>
+                <td>{{row.attributes.age}}</td>
                 <!-- <td>
                   <button type="button" ng-click="removeItem(row)" class="btn btn-sm btn-danger">
                     <i class="glyphicon glyphicon-remove-circle">

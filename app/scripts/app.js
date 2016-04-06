@@ -7,7 +7,10 @@
  *
  * Main module of the application.
  */
-angular
+Parse.initialize("lXyIqnVoIxjcsOIvUB437a7Bwt0IacROjea1SaM7", "OKPUCXkfbDiDsPzYwWutKzMWDx6qGN2Wrg837V1U");
+// Parse.serverURL = 'http://localhost:1337/parse';
+
+var app = angular
   .module('sbAdminApp', [
     'oc.lazyLoad',
     'ui.router',
@@ -15,8 +18,10 @@ angular
     'angular-loading-bar',
     'smart-table',
     'angularModalService'
-  ])
-  .config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
+  ]);
+
+
+  app.config(['$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
 
     $ocLazyLoadProvider.config({
       debug:false,
@@ -38,7 +43,8 @@ angular
                     'scripts/directives/header/header.js',
                     'scripts/directives/header/header-notification/header-notification.js',
                     'scripts/directives/sidebar/sidebar.js',
-                    'scripts/directives/sidebar/sidebar-search/sidebar-search.js'
+                    'scripts/directives/sidebar/sidebar-search/sidebar-search.js',
+                    'scripts/services/employeeService.js'
                     ]
                 }),
                 $ocLazyLoad.load(
