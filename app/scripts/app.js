@@ -7,8 +7,8 @@
  *
  * Main module of the application.
  */
-Parse.initialize("lXyIqnVoIxjcsOIvUB437a7Bwt0IacROjea1SaM7", "OKPUCXkfbDiDsPzYwWutKzMWDx6qGN2Wrg837V1U");
-// Parse.serverURL = 'http://localhost:1337/parse';
+Parse.initialize("123", "laserblackdog");
+Parse.serverURL = 'http://localhost:1337/parse';
 
 var app = angular
   .module('sbAdminApp', [
@@ -17,7 +17,8 @@ var app = angular
     'ui.bootstrap',
     'angular-loading-bar',
     'smart-table',
-    'angularModalService'
+    'angularModalService',
+    'bootstrap.fileField'
   ]);
 
 
