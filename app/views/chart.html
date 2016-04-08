@@ -126,18 +126,37 @@
               <br>
               <button type="button" class="btn btn-success btn-block">Scan</button>
             </div>
-            
-            
-
           </div>
         </div>
-
 
       </div>
       <div class="modal-footer">
         <button type="button" ng-hide="modal.isUpdate" ng-click="addUser()" class="btn btn-primary" data-dismiss="modal">{{modal.mode}}</button>
         <button type="button" ng-show="modal.isUpdate" ng-click="updateUser()" class="btn btn-primary" data-dismiss="modal">{{modal.mode}}</button>
+        <button type="button" ng-show="modal.isUpdate" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmation">Delete</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="deleteConfirmation" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Delete user</h4>
+      </div>
+      <div class="modal-body">
+        <p>WARNING: This will permanently delete the user.</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" ng-show="modal.isUpdate" ng-click="deleteUser()" class="btn btn-danger" data-dismiss="modal">Delete</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
 

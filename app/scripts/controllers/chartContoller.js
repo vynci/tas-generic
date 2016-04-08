@@ -89,14 +89,25 @@ angular.module('sbAdminApp')
         currentEmployee.save(null, {
             success: function(result) {
             // Execute any logic that should take place after the object is saved.
-            getAll();
-            console.log(result);
+                getAll();
             },
             error: function(gameScore, error) {
             // Execute any logic that should take place if the save fails.
             // error is a Parse.Error with an error code and message.
             }
         });
+    }
+    
+    $scope.deleteUser = function(){
+        currentEmployee.destroy({
+            success: function(myObject) {
+               getAll();
+            },
+            error: function(myObject, error) {
+                // The delete failed.
+                // error is a Parse.Error with an error code and message.
+            }
+        });        
     }
 
     $scope.addUser = function(){

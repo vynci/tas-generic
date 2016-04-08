@@ -29,7 +29,7 @@ var app = angular
       events:true,
     });
 
-    $urlRouterProvider.otherwise('/dashboard/home');
+    $urlRouterProvider.otherwise('/login');
 
     $stateProvider
       .state('dashboard', {
@@ -112,7 +112,18 @@ var app = angular
     })
       .state('login',{
         templateUrl:'views/pages/login.html',
-        url:'/login'
+        controller: 'LoginCtrl',
+        url:'/login',
+        resolve: {
+          loadMyFiles:function($ocLazyLoad) {
+            return $ocLazyLoad.load({
+              name:'sbAdminApp',
+              files:[
+                'scripts/controllers/login.js'
+              ]
+            })
+          }
+        }
     })
       .state('dashboard.chart',{
         templateUrl:'views/chart.html',
