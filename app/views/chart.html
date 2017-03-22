@@ -41,7 +41,7 @@
                   data-ng-options="sortList as sortList.name for sortList in sortLists">
                   <option value="">Sort By</option>
                 </td>
-                <td colspan="2">
+                <td colspan="4" style="text-align:right;">
                   <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" ng-click="isDeleteProgress = false; isDeleteCompleted = false;" data-target="#deleteConfirmationModal">
                     <i class="glyphicon glyphicon-trash">
                     </i> Delete
@@ -59,6 +59,7 @@
                 <th st-sort="attributes.gender">Gender</th>
                 <th st-sort="attributes.age">Age</th>
                 <th st-sort="attributes.fingerPrintId">Finger Print Id</th>
+                <th st-sort="attributes.rfId" ng-if="enableRFID">RFID</th>
                 <th>Action</th>
               </tr>
 
@@ -72,7 +73,8 @@
                 <td>{{row.attributes.position}}</td>
                 <td>{{row.attributes.gender}}</td>
                 <td>{{row.attributes.age}}</td>
-                <td>{{row.attributes.fingerPrintId}}</td>
+                <td>{{row.attributes.fingerPrintId || 'n/a'}}</td>
+                <td ng-if="enableRFID">{{row.attributes.rfId || 'n/a'}}</td>
                 <td><button class="btn btn-sm btn-info" ng-click="editModal(row.id)" data-toggle="modal" data-target="#myModal">
                   <i class="fa fa-pencil-square-o">
                   </i></button>
@@ -225,12 +227,25 @@
                 <br>
                 <button type="button" ng-click="scanFinger()" ng-class="buttonScanStatus" class="btn btn-block">{{scanStatus}}</button>
                 <br>
+
+                <label>RFID</label> <label class="text-danger">{{detectedRFID || '(Scan the RFID)'}}</label>
+                <label ng-if="rfidDetectStatus" class="text-danger">{{rfidDetectStatus}}</label>
+                <br>
+                <button type="button" ng-click="pairRFID()" ng-if="detectedRFID" ng-class="rfidButtonScanStatus" class="btn btn-block">{{rfidScanStatus || 'Pair User with RFID'}}</button>
+                <br>
               </div>
               <div class="form-group" ng-show="modal.isUpdate">
                 <label>Finger Print Id: </label> <label class="text-danger" ng-if="buttonScanStatus != 'btn-success'">{{user.fingerPrintId || 'n/a'}}</label>
                 <br>
                 <button type="button" ng-hide="isCurrentFingerDeleted" ng-click="updateFingerPrintInit()" ng-class="buttonScanStatus" class="btn btn-block">{{scanStatus}}</button>
                 <button type="button" ng-show="isCurrentFingerDeleted" ng-click="updateFingerPrintGo()" ng-class="buttonScanStatus" class="btn btn-block">{{scanStatus}}</button>
+                <br>
+
+                <label>RFID</label> <label class="text-danger">{{detectedRFID || '(Scan the RFID)'}}</label>
+                <label ng-if="rfidDetectStatus" class="text-danger">{{rfidDetectStatus}}</label>
+                <br>
+                <button type="button" ng-click="pairRFID()" ng-if="isRFIDDetected" ng-class="rfidButtonScanStatus" class="btn btn-block">{{rfidScanStatus || 'Pair User with RFID'}}</button>
+                <button type="button" ng-click="unpairRFID()" ng-if="detectedRFID && !isRFIDDetected" class="btn btn-block btn-danger">Unpair user with RFID.</button>
                 <br>
               </div>
             </div>

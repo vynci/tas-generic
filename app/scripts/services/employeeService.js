@@ -61,10 +61,29 @@ app.service('employeeService', function($q) {
 		return defer.promise;
 	};
 
+	var getEmployeeByRFID = function(id) {
+		var defer = $q.defer();
+		var EmployeeObject = Parse.Object.extend("Employee");
+		var query = new Parse.Query(EmployeeObject);
+		query.equalTo("rfId", id);
+		query.find({
+			success: function(results) {
+				console.log(results);
+				defer.resolve(results);
+			},
+			error: function(error) {
+				defer.reject(error);
+				alert("Error: " + error.code + " " + error.message);
+			}
+		});
+		return defer.promise;
+	};
+
 	return {
 		getEmployee: getEmployee,
 		getEmployees: getEmployees,
-		getEmployeeByFingerPrintId : getEmployeeByFingerPrintId
+		getEmployeeByFingerPrintId : getEmployeeByFingerPrintId,
+		getEmployeeByRFID : getEmployeeByRFID
 	};
 
 });

@@ -18,8 +18,6 @@ angular.module('sbAdminApp')
 
 					getSettings();
 
-
-
 					function getSettings(){
 						settingsService.getSetting(settingId)
 						.then(function(results) {
@@ -27,6 +25,7 @@ angular.module('sbAdminApp')
 							$scope.settings = results[0];
 
 							$scope.companyName = $scope.settings.get('companyName');
+							// $scope.isRFIDAvailable = $scope.settings.get('isRFIDAvailable');
 							$scope.headerColor = {
 								background: {'background-color': $scope.settings.get('colorThemes').headerBackground},
 								text: {color: $scope.settings.get('colorThemes').headerText}

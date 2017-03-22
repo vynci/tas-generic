@@ -19,18 +19,27 @@ angular.module('sbAdminApp')
       .then(function(results) {
         // Handle the result
         $scope.settings = results[0];
+
         $scope.applicationVersion = $scope.settings.get('version');
         $scope.settingsProductId = $scope.settings.get('productId');
         $scope.settingsFirstBoot = $scope.settings.get('firstBoot');
         $scope.settingsConfigPassword = $scope.settings.get('configPassword');
 
         $scope.isSecondaryPassword = $scope.settings.get('isSecondaryPassword');
+        $scope.enableRFID = $scope.settings.get('enableRFID');
+        $scope.hardwareType = $scope.settings.get('hardwareType');
         $scope.secondaryPasswordFromDatabase = $scope.settings.get('secondaryPassword');
 
         if($scope.isSecondaryPassword){
           $scope.isSecondaryPassword = "true";
         } else {
           $scope.isSecondaryPassword = "false";
+        }
+
+        if($scope.enableRFID){
+          $scope.enableRFID = "true";
+        } else {
+          $scope.enableRFID = "false";
         }
 
       }, function(err) {
@@ -95,6 +104,58 @@ angular.module('sbAdminApp')
         }
       } else{
         $scope.settings.set("isSecondaryPassword", false);
+      }
+
+      $scope.settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          alert('successfully updated!');
+          getSettings();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          alert('update error!');
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+    }
+
+    $scope.updateEnableRFID = function(){
+
+      if($scope.enableRFID === "true"){
+        $scope.settings.set("enableRFID", true);
+      } else{
+        $scope.settings.set("enableRFID", false);
+      }
+
+      $scope.settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          alert('successfully updated!');
+          getSettings();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          alert('update error!');
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+    }
+
+    $scope.updateHardwareType = function(){
+
+      if($scope.hardwareType === "generic"){
+        $scope.settings.set('hardwareType', 'generic');
+        $scope.settings.set("isDTRHeaderCustomizable", true);
+        $scope.settings.set('enableOvertimeOption', true);
+      } else{
+        $scope.settings.set('hardwareType', 'deped');
+        $scope.settings.set('isCutOffTime', true);
+        $scope.settings.set("isDTRHeaderCustomizable", false);
+        $scope.settings.set('enableOvertimeOption', false);
+        $scope.settings.set('enableDateRange', false);
+        $scope.settings.set('isShowTotalTime', false);
+        $scope.settings.set('isTwoLogsEnable', false);
       }
 
       $scope.settings.save(null, {

@@ -85,6 +85,8 @@ angular.module('sbAdminApp')
         $scope.isTwoLogsEnable = $scope.settings.get('isTwoLogsEnable');
         $scope.isCutOffTime = $scope.settings.get('isCutOffTime');
 
+        $scope.hardwareType = $scope.settings.get('hardwareType');
+
         if($scope.isShowTotalTime){
           $scope.isShowTotalTime = "true";
         } else {

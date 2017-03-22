@@ -91,7 +91,7 @@
           <input type="text" class="form-control" ng-model="companyName" placeholder="Ex: Company Name">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" ng-show="hardwareType === 'generic'">
           <label for="exampleInputName2">Enable DTR Header Customizable: </label>
           <select class="form-control" ng-model="isDTRHeaderCustomizable">
             <option value="true">Yes</option>
@@ -124,7 +124,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" ng-show="hardwareType === 'generic'">
           <label for="exampleInputName2">Enable Overtime Hours: (<em>*Requires a reboot for changes to take effect.</em>)</label>
           <select class="form-control" ng-model="enableOvertimeOption">
             <option value="true">Yes</option>
@@ -132,7 +132,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" ng-show="hardwareType === 'generic'">
           <label for="exampleInputName2">Enable Date Range: </label>
           <select class="form-control" ng-model="enableDateRange">
             <option value="true">Yes</option>
@@ -147,7 +147,7 @@
 
         <hr>
 
-        <div class="form-group">
+        <div class="form-group" ng-show="hardwareType === 'generic'">
           <label for="exampleInputName2">Enable Two Logs Option: (<em>*Requires a reboot for changes to take effect.</em>)</label>
           <select class="form-control" ng-model="isTwoLogsEnable">
             <option value="true">Yes</option>
@@ -155,7 +155,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" ng-show="hardwareType === 'generic'">
           <label for="exampleInputName2">Enable Cut-off Time: (<em>*Requires a reboot for changes to take effect.</em>)</label>
           <select class="form-control" ng-model="isCutOffTime">
             <option value="true">Yes</option>

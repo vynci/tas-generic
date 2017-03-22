@@ -36,49 +36,84 @@
 </div>
 </div>
 
-<div class="row">
-	<div class="col-md-4 col-md-offset-4">
-		<div class=" panel panel-default">
-			<!-- <div class="panel-heading">
-			<h3 class="panel-title">Please Sign In</h3>
-		</div> -->
-		<div class="panel-body">
-			<div class="form-group">
-				<label for="exampleInputName2">Enable Secondary Password (Edit Reports): </label>
-				<select class="form-control" ng-model="isSecondaryPassword">
-					<option value="true">Yes</option>
-					<option value="false">No</option>
-				</select>
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<div class=" panel panel-default">
+				<!-- <div class="panel-heading">
+				<h3 class="panel-title">Please Sign In</h3>
+			</div> -->
+			<div class="panel-body">
+				<div class="form-group">
+					<label for="exampleInputName2">Enable Secondary Password (Edit Reports): </label>
+					<select class="form-control" ng-model="isSecondaryPassword">
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+
+				<div class="form-group" ng-show="isSecondaryPassword">
+					<label for="exampleInputName2">Old Secondary Password</label>
+					<input type="password" class="form-control" ng-model="secondaryPassword.oldPassword" placeholder="************">
+				</div>
+
+				<div class="form-group" ng-show="isSecondaryPassword">
+					<label for="exampleInputName2">New Secondary Password</label>
+					<input type="password" class="form-control" ng-model="secondaryPassword.newPassword" placeholder="************">
+				</div>
+
+				<div class="form-group" ng-show="isSecondaryPassword">
+					<label for="exampleInputName2">Confirm Secondary Password</label>
+					<input type="password" class="form-control" ng-model="secondaryPassword.confirmPassword" placeholder="************">
+				</div>
+
+				<div class="form-group" ng-show="isSecondaryPassword">
+					<button type="button" class="btn btn-warning btn-block btn-outline" ng-click="passwordResetStatus = ''; productIdCredentials = '';" data-toggle="modal" data-target="#forgotSecondaryPasswordModal">Forgot Secondary Password</button>
+				</div>
+				<a ng-click="updateSecondaryPassword()" class="btn btn-lg btn-primary btn-block">Save</a>
+
 			</div>
 
-			<div class="form-group" ng-show="isSecondaryPassword">
-				<label for="exampleInputName2">Old Secondary Password</label>
-				<input type="password" class="form-control" ng-model="secondaryPassword.oldPassword" placeholder="************">
 			</div>
-
-			<div class="form-group" ng-show="isSecondaryPassword">
-				<label for="exampleInputName2">New Secondary Password</label>
-				<input type="password" class="form-control" ng-model="secondaryPassword.newPassword" placeholder="************">
-			</div>
-
-			<div class="form-group" ng-show="isSecondaryPassword">
-				<label for="exampleInputName2">Confirm Secondary Password</label>
-				<input type="password" class="form-control" ng-model="secondaryPassword.confirmPassword" placeholder="************">
-			</div>
-
-			<div class="form-group" ng-show="isSecondaryPassword">
-				<button type="button" class="btn btn-warning btn-block btn-outline" ng-click="passwordResetStatus = ''; productIdCredentials = '';" data-toggle="modal" data-target="#forgotSecondaryPasswordModal">Forgot Secondary Password</button>
-			</div>
-			<a ng-click="updateSecondaryPassword()" class="btn btn-lg btn-primary btn-block">Save</a>
 
 		</div>
-
-		</div>
-
 	</div>
 
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<div class=" panel panel-default">
+				<div class="panel-body">
+					<div class="form-group">
+						<label for="exampleInputName2">Enable RFID (* <em>Requires reboot to fully work</em>): </label>
+						<select class="form-control" ng-model="enableRFID">
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+						<br>
+						<a ng-click="updateEnableRFID()" class="btn btn-lg btn-primary btn-block">Save</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-</div>
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<div class=" panel panel-default">
+				<div class="panel-body">
+					<div class="form-group">
+						<label for="exampleInputName2">Hardware Type (* <em>Requires reboot to fully work</em>): </label>
+						<select class="form-control" ng-model="hardwareType">
+							<option value="generic">Generic/Private</option>
+							<option value="deped">Civil Service</option>
+						</select>
+						<br>
+						<a ng-click="updateHardwareType()" class="btn btn-lg btn-primary btn-block">Save</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>
 
 <div id="forgotSecondaryPasswordModal" class="modal fade" role="dialog">

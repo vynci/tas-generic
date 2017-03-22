@@ -66,7 +66,11 @@ angular.module('sbAdminApp')
       $scope.userTable = $scope.settings.get('userTable');
       $scope.userInfo = {}
       fingerPrintIdPool = $scope.settings.get('fingerPrintIdPool');
+      $scope.enableRFID = $scope.settings.get('enableRFID');
 
+      if($scope.enableRFID ){
+        $scope.isScanFinger = false;
+      }
       console.log(fingerPrintIdPool);
 
     }, function(err) {
@@ -140,6 +144,10 @@ angular.module('sbAdminApp')
     $scope.previewImage = '';
     $scope.scanStatus = 'Scan';
     $scope.buttonScanStatus = 'btn-info';
+    $scope.rfidButtonScanStatus = 'btn-warning';
+    $scope.rfidScanStatus = null;
+    $scope.detectedRFID = null;
+    $scope.rfidDetectStatus = null;
     $scope.deleteConfirmation = false;
   };
 
@@ -152,7 +160,12 @@ angular.module('sbAdminApp')
     currentEmployee = '';
     $scope.previewImage = '';
     $scope.scanStatus = 'Change Fingerprint';
-    $scope.buttonScanStatus = 'btn-info';
+    $scope.rfidButtonScanStatus = 'btn-warning';
+    $scope.rfidScanStatus = 'Change RFID';
+    $scope.rfidScanStatus = null;
+    $scope.detectedRFID = null;
+    $scope.rfidDetectStatus = null;
+    $scope.isRFIDDetected = false;
     $scope.deleteConfirmation = false;
     $scope.isCurrentFingerDeleted = false;
     employeeService.getEmployee(id)
@@ -166,6 +179,7 @@ angular.module('sbAdminApp')
       $scope.user.age = result[0].get('age');
       $scope.user.position = result[0].get('position');
       $scope.user.fingerPrintId = result[0].get('fingerPrintId');
+      $scope.detectedRFID = result[0].get('rfId');
       $scope.previewImage = result[0].get('avatarUrl');
 
       currentEmployee = result[0];
@@ -186,6 +200,7 @@ angular.module('sbAdminApp')
     currentEmployee.set("gender", $scope.user.gender);
     currentEmployee.set("age", $scope.user.age);
     currentEmployee.set("position", $scope.user.position);
+    currentEmployee.set("rfId", $scope.user.rfId);
 
     if($scope.isCurrentFingerDeleted){
       var fingerPrintId = fingerPrintIdPool[0];
@@ -484,6 +499,7 @@ angular.module('sbAdminApp')
         employee.set("position", $scope.user.position);
         employee.set("avatarUrl", data.data.url);
         employee.set("fingerPrintId", fingerPrintId.toString());
+        employee.set("rfId", $scope.user.rfId);
         employee.set("currentPeriodLog", {"id":null,"date":null,"sequence":0,"totalTime":0});
 
         employee.save(null, {
@@ -539,6 +555,7 @@ angular.module('sbAdminApp')
       employee.set("position", $scope.user.position);
       employee.set("avatarUrl", $scope.defaultProfPic);
       employee.set("fingerPrintId", fingerPrintId.toString());
+      employee.set("rfId", $scope.user.rfId);
       employee.set("currentPeriodLog", {"id":null,"date":null,"sequence":0,"totalTime":0});
 
       employee.save(null, {
@@ -627,6 +644,11 @@ angular.module('sbAdminApp')
     console.log(data);
 
     var tmp = fingerPrintIdPool[0];
+
+    if(stringContains(data, 'rfid:')){
+      processRFID(data);
+    }
+
     if(stringContains(data, 'm:enroll')){
       console.log(tmp);
       socket.emit('toPublicServer', tmp.toString());
@@ -681,9 +703,40 @@ angular.module('sbAdminApp')
       $scope.isDetectedFingerPrint = true;
       $scope.detectedFingerPrintId = tmpData[1].toString();
     }
-
-
   });
+
+  $scope.pairRFID = function(){
+    employeeService.getEmployeeByRFID($scope.detectedRFID)
+    .then(function(results) {
+      if(results.length === 0){
+        $scope.user.rfId = $scope.detectedRFID;
+        $scope.rfidButtonScanStatus = 'btn-success';
+        $scope.rfidScanStatus = 'RFID Pairing Successful'
+      }else{
+        $scope.rfidDetectStatus = 'RFID already used, Please try other RFID.'
+        $scope.isRFIDDetected = false;
+        $scope.detectedRFID = null;
+      }
+    }, function(err) {
+      // Error occurred
+      console.log(err);
+    });
+  }
+
+  $scope.unpairRFID = function(){
+    $scope.user.rfId = '';
+    $scope.detectedRFID = '';
+  }
+
+  function processRFID(data){
+    console.log(data);
+    var tmp = data.split(':');
+    $scope.detectedRFID = tmp[1];
+    $scope.isRFIDDetected = true;
+    $scope.rfidButtonScanStatus = 'btn-warning';
+    $scope.rfidScanStatus = null
+    $scope.rfidDetectStatus = null;
+  }
 
   $scope.closeModal = function(){
     console.log('Close Modal');

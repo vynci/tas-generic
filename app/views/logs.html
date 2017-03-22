@@ -9,7 +9,7 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        Logs ({{displayedCollection.length}})
+        Logs ({{numberOfLogs}})
       </div>
       <!-- Single button -->
       <div class="panel-body">
@@ -55,15 +55,13 @@
             </tbody>
           </table>
       </div>
-
-
-
-
-
-
+    </div>
   </div>
+  <div style="text-align: center;">
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" ng-repeat="i in numberOfPages" ng-click="getAll(i)">{{i + 1}}</button>
+    </div>
   </div>
-
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 

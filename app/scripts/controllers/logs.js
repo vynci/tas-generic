@@ -38,6 +38,38 @@ angular.module('sbAdminApp')
       'name' : ''
     };
 
+    $scope.getAll = function(page){
+      periodLogService.getNumberOfLogs()
+      .then(function(results) {
+        // Handle the result
+        $scope.numberOfLogs = results;
+        $scope.numberOfPages = [];
+
+        var displayLimit = 100;
+        var tmp = results;
+        tmp = tmp / displayLimit;
+        tmp = Math.ceil(tmp);
+
+        for(var i=0;i<tmp;i++){
+          $scope.numberOfPages.push(i);
+        }
+        periodLogService.getAll(results, page)
+        .then(function(results) {
+          // Handle the result
+          $scope.displayedCollection = results;
+        }, function(err) {
+          // Error occurred
+          console.log(err);
+        });
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      });
+
+    };
+
+    $scope.getAll(0);
+
     $scope.calcUnderTimeHours = function(hour){
 
       var tmp = hour / 60;
@@ -225,8 +257,6 @@ angular.module('sbAdminApp')
       });
     }
 
-    //getAllEmployees();
-    getLogByUser();
     function getAllEmployees(sort){
       employeeService.getEmployees(sort)
       .then(function(results) {
@@ -286,6 +316,7 @@ angular.module('sbAdminApp')
         console.log(percentComplete);
       });
     };
+
 
     $scope.convertDate = function(date){
       //
