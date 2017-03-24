@@ -109,6 +109,7 @@ var app = angular
               'scripts/directives/chat/chat.js',
               'scripts/directives/dashboard/stats/stats.js',
               'scripts/services/settingsService.js',
+              'scripts/services/editReportRequests.js'
               ]
             })
           }
@@ -188,6 +189,7 @@ var app = angular
               'scripts/services/dailyLogService.js',
               'scripts/services/socketService.js',
               'scripts/services/settingsService.js',
+              'scripts/services/editReportRequests.js'
             ]
           })
         }
@@ -279,6 +281,28 @@ var app = angular
               'scripts/services/settingsService.js',
               'scripts/services/socketService.js',
               'scripts/services/holidayService.js'
+            ]
+          })
+        }
+      }
+    })
+    .state('dashboard.editReportRequests',{
+      templateUrl:'views/editReportRequests.html',
+      url:'/edit-report-requests',
+      controller:'EditReportsCtrl',
+      resolve: {
+        loadMyFiles:function($ocLazyLoad) {
+          return $ocLazyLoad.load({
+            name:'sbAdminApp',
+            files:[
+              'scripts/controllers/editReportRequests.js',
+              'scripts/services/employeeService.js',
+              'scripts/services/dailyLogService.js',
+              'scripts/services/periodLogService.js',
+              'scripts/services/settingsService.js',
+              'scripts/services/socketService.js',
+              'scripts/services/holidayService.js',
+              'scripts/services/editReportRequests.js'
             ]
           })
         }

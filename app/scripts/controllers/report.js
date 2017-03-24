@@ -297,18 +297,29 @@ angular.module('sbAdminApp')
             arrivalPM : '',
             departureAM : '',
             departurePM : '',
-            totalTime : minutesToHours(0)
+            totalTime : minutesToHours(0),
+            periodDate : data.attributes.periodDate,
+            employee : {
+              id : data.attributes.employeeId,
+              name : data.attributes.employeeName || data.attributes.name
+            }
           }
         }else{
           $scope.editReportRow = data;
           $scope.newReportData = {
             isValid : true,
+            periodLogId : $scope.editReportRow.id,
             arrivalAM : $scope.editReportRow.get('arrivalAM'),
             arrivalPM : $scope.editReportRow.get('arrivalPM'),
             departureAM : $scope.editReportRow.get('departureAM'),
             departurePM : $scope.editReportRow.get('departurePM'),
             totalTime : minutesToHours(parseInt($scope.editReportRow.get('totalTime')) || 0),
-            extraLogPool : $scope.editReportRow.get('extraLogPool')
+            extraLogPool : $scope.editReportRow.get('extraLogPool'),
+            periodDate : data.attributes.periodDate,
+            employee : {
+              id : data.attributes.employeeId,
+              name : data.attributes.employeeName || data.attributes.name
+            }
           }
         }
       } else{
@@ -323,6 +334,11 @@ angular.module('sbAdminApp')
         $scope.editReportRow = periodLog;
 
         $scope.newReportData = {
+          periodDate : createdAt,
+          employee : {
+            id : data.attributes.employeeId,
+            name : data.attributes.employeeName || data.attributes.name
+          },
           isValid : true,
           arrivalAM : '',
           arrivalPM : '',
@@ -330,39 +346,84 @@ angular.module('sbAdminApp')
           departurePM : '',
           totalTime : minutesToHours(0)
         }
+        console.log($scope.newReportData);
       }
 
 
     }
 
-    $scope.updateReportRow = function(){
-      var periodLog = $scope.editReportRow;
-      console.log(periodLog.className);
+    $scope.updateReportRow = function(isRequest, isDelete){
+      console.log($scope.newReportData);
+      if(isRequest){
+        var EditReportRequests = Parse.Object.extend("EditReportRequests");
+        var query = new EditReportRequests();
 
-      var hours = $scope.newReportData.totalTime.hours * 60;
-      var totalTime = hours + $scope.newReportData.totalTime.minutes;
+        var hours = $scope.newReportData.totalTime.hours * 60;
+        var totalTime = hours + $scope.newReportData.totalTime.minutes;
 
-      periodLog.set("arrivalAM", $scope.newReportData.arrivalAM);
-      periodLog.set("arrivalPM", $scope.newReportData.arrivalPM);
-      periodLog.set("departureAM", $scope.newReportData.departureAM);
-      periodLog.set("departurePM", $scope.newReportData.departurePM);
-      periodLog.set("extraLogPool", $scope.newReportData.extraLogPool);
-      periodLog.set("totalTime", totalTime.toString());
+        if($scope.newReportData.periodLogId){
+          if(isDelete){
+            query.set("requestType", 'Delete');
+          }else{
+            query.set("requestType", 'Update');
+          }
 
-      console.log(periodLog.attributes);
-
-      periodLog.save(null, {
-        success: function(result) {
-          // Execute any logic that should take place after the object is saved.
-          console.log(result);
-          $scope.generateLogs();
-
-        },
-        error: function(gameScore, error) {
-          // Execute any logic that should take place if the save fails.
-          // error is a Parse.Error with an error code and message.
+        }else{
+          query.set("requestType", 'New');
         }
-      });
+
+        query.set("periodLogId", $scope.newReportData.periodLogId);
+        query.set("periodDate", $scope.newReportData.periodDate);
+        query.set("employeeId", $scope.newReportData.employee.id);
+        query.set("employeeName", $scope.newReportData.employee.name);
+        query.set("arrivalAM", $scope.newReportData.arrivalAM);
+        query.set("arrivalPM", $scope.newReportData.arrivalPM);
+        query.set("departureAM", $scope.newReportData.departureAM);
+        query.set("departurePM", $scope.newReportData.departurePM);
+        query.set("extraLogPool", $scope.newReportData.extraLogPool);
+        query.set("totalTime", totalTime.toString());
+
+        query.save(null, {
+          success: function(result) {
+            // Execute any logic that should take place after the object is saved.
+            console.log(result);
+            $scope.generateLogs();
+
+          },
+          error: function(gameScore, error) {
+            // Execute any logic that should take place if the save fails.
+            // error is a Parse.Error with an error code and message.
+          }
+        });
+      } else{
+        var periodLog = $scope.editReportRow;
+        console.log(periodLog.className);
+
+        var hours = $scope.newReportData.totalTime.hours * 60;
+        var totalTime = hours + $scope.newReportData.totalTime.minutes;
+
+        periodLog.set("arrivalAM", $scope.newReportData.arrivalAM);
+        periodLog.set("arrivalPM", $scope.newReportData.arrivalPM);
+        periodLog.set("departureAM", $scope.newReportData.departureAM);
+        periodLog.set("departurePM", $scope.newReportData.departurePM);
+        periodLog.set("extraLogPool", $scope.newReportData.extraLogPool);
+        periodLog.set("totalTime", totalTime.toString());
+
+        console.log(periodLog.attributes);
+
+        periodLog.save(null, {
+          success: function(result) {
+            // Execute any logic that should take place after the object is saved.
+            console.log(result);
+            $scope.generateLogs();
+
+          },
+          error: function(gameScore, error) {
+            // Execute any logic that should take place if the save fails.
+            // error is a Parse.Error with an error code and message.
+          }
+        });
+      }
     }
 
     $scope.removeExtraLogs = function(index, data){

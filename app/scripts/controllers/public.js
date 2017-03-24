@@ -7,7 +7,7 @@
  * Controller of the sbAdminApp
  */
 angular.module('sbAdminApp')
-  .controller('PublicCtrl', function($scope, socket, dailyLogService, settingsService, $state) {
+  .controller('PublicCtrl', function($scope, socket, dailyLogService, settingsService, $state, editReportRequests) {
 
     var monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -36,6 +36,20 @@ angular.module('sbAdminApp')
     startTime();
 
     getSettings();
+
+    getEditReportRequests();
+
+    function getEditReportRequests(){
+      editReportRequests.getAll()
+      .then(function(results) {
+        // Handle the result
+        console.log(results);
+        $scope.editReportRequests = results;
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      });
+    };
 
     $scope.redirectToLogin = function(){
       $state.go('login');

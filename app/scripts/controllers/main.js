@@ -7,7 +7,7 @@
  * Controller of the sbAdminApp
  */
 angular.module('sbAdminApp')
-  .controller('MainCtrl', function($scope,$position, socket, employeeService, $modalStack, dailyLogService, $state, settingsService) {
+  .controller('MainCtrl', function($scope,$position, socket, employeeService, $modalStack, dailyLogService, $state, settingsService, editReportRequests) {
     var currentUser = Parse.User.current();
     if(!currentUser){
       $state.go('login');
@@ -40,6 +40,7 @@ angular.module('sbAdminApp')
 
 
     getSettings();
+    getEditReportRequests();
 
     function getSettings(){
       settingsService.getSetting(settingId)
@@ -71,6 +72,17 @@ angular.module('sbAdminApp')
       });
     };
 
+
+    function getEditReportRequests(){
+      editReportRequests.getAll()
+      .then(function(results) {
+        // Handle the result
+        $scope.editReportRequests = results;
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      });
+    };
 
     function getAll(){
 
