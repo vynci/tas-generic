@@ -29,6 +29,13 @@ angular.module('sbAdminApp')
         $scope.enableRFID = $scope.settings.get('enableRFID');
         $scope.hardwareType = $scope.settings.get('hardwareType');
         $scope.secondaryPasswordFromDatabase = $scope.settings.get('secondaryPassword');
+        var forgotSecondaryPasswordPool = $scope.settings.get('forgotSecondaryPasswordPool');
+
+        $scope.secretKey = {
+          first : forgotSecondaryPasswordPool[0],
+          second : forgotSecondaryPasswordPool[1],
+          third : forgotSecondaryPasswordPool[2],
+        };
 
         if($scope.isSecondaryPassword){
           $scope.isSecondaryPassword = "true";
@@ -71,6 +78,20 @@ angular.module('sbAdminApp')
       });
     }
 
+    $scope.reformatFingerPrint = function(){
+      settingsService.reformatFingerPrint()
+      .then(function(results) {
+        alert('Successfully Formatted! Please wait at least 30 seconds, after doing any activity on the application.');
+        getSettings();
+        // Handle the result
+      }, function(err) {
+        // Error occurred
+        alert('update error!');
+      }, function(percentComplete) {
+        console.log(percentComplete);
+      });
+    }
+
     $scope.setToFirstBoot = function(){
 
       $scope.settings.set("firstBoot", true);
@@ -89,22 +110,34 @@ angular.module('sbAdminApp')
       });
     }
 
+    $scope.forgotSecondaryPassword = function(){
+      console.log('reset!');
+
+      $scope.settings.set("secondaryPassword", 'admin2');
+
+      $scope.settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          alert('successfully reset to "admin2"!');
+          getSettings();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          alert('update error!');
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+    }
+
     $scope.updateSecondaryPassword = function(){
 
       if($scope.isSecondaryPassword === "true"){
         $scope.settings.set("isSecondaryPassword", true);
-        if($scope.secondaryPassword.oldPassword === $scope.secondaryPasswordFromDatabase){
-          if($scope.secondaryPassword.newPassword === $scope.secondaryPassword.confirmPassword){
-            $scope.settings.set("secondaryPassword", $scope.secondaryPassword.confirmPassword);
-          }else{
-            alert('New Password and Confirmation does not match.');
-          }
-        } else {
-          alert('Old Secondary Password Invalid.');
-        }
       } else{
         $scope.settings.set("isSecondaryPassword", false);
       }
+
+      $scope.settings.set("forgotSecondaryPasswordPool", [$scope.secretKey.first, $scope.secretKey.second, $scope.secretKey.third]);
 
       $scope.settings.save(null, {
         success: function(result) {

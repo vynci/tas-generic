@@ -31,6 +31,12 @@
 			<thead>
 				<tr class="noBorder">
 					<h3>Edit Requests</h3>
+					<div style="text-align: right;">
+						<button class="btn btn-sm btn-success" ng-click="openChangePasswordModal()" data-toggle="modal" data-target="#changePasswordModal">
+							Change Password
+						</button>
+					</div>
+					<br>
 				</tr>
 
 				<tr>
@@ -41,7 +47,7 @@
 					<th st-sort="attributes.lastName">Departure AM</th>
 					<th st-sort="attributes.position">Arrival PM</th>
 					<th st-sort="attributes.gender">Departure PM</th>
-					<th st-sort="attributes.fingerPrintId">Total Time</th>
+					<th st-sort="attributes.fingerPrintId">Total Time(mins)</th>
 					<th st-sort="attributes.rfId">Extra Logs</th>
 					<th>Action</th>
 				</tr>
@@ -52,10 +58,10 @@
 					<td style="color: {{requestTypeColor[row.attributes.requestType]}}">{{row.attributes.requestType || 'n/a'}}</td>
 					<td>{{row.attributes.employeeName || 'n/a'}}</td>
 					<td>{{convertDate(row.attributes.periodDate) || 'n/a'}}</td>
-					<td>{{row.attributes.arrivalAM || 'n/a'}}</td>
+					<td>{{row.attributes.arrivalAM || row.attributes.loginDate || 'n/a'}}</td>
 					<td>{{row.attributes.departureAM || 'n/a'}}</td>
 					<td>{{row.attributes.arrivalPM || 'n/a'}}</td>
-					<td>{{row.attributes.departurePM || 'n/a'}}</td>
+					<td>{{row.attributes.departurePM || row.attributes.logoutDate || 'n/a'}}</td>
 					<td>{{row.attributes.totalTime || 'n/a'}}</td>
 					<td>{{row.attributes.extraLogPool.length || 'n/a'}}</td>
 					<td>
@@ -92,6 +98,70 @@
 			<div class="modal-footer">
 				<button type="button" ng-click="requestAction()" class="btn btn-danger" ng-disabled="isDeleteProgress" data-dismiss="modal">Yes, I'm Sure</button>
 				<button type="button" ng-click="closeModal()" class="btn btn-default" ng-disabled="isDeleteProgress" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="changePasswordModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Change Password</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<input type="password" class="form-control" ng-model="currentSecondaryPassword" placeholder="Current Password" autofocus>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" ng-model="newSecondaryPassword" placeholder="New Password" autofocus>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" ng-model="confirmNewSecondaryPassword" placeholder="Confirm Password" autofocus>
+				</div>
+				<div>
+					<b>{{changePasswordStatus}}</b>
+				</div>
+
+				<br>
+				<a ng-click="changePassword()" class="btn btn-lg btn-primary btn-block">Submit</a>
+			</div>
+			<div class="modal-footer">
+
+				<button type="button" ng-click="closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Forgot Password</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<input class="form-control" ng-model="forgotPasswordIndicator" placeholder="Enter Secret Key. Please contact admin for assistance. Thank You!" autofocus>
+				</div>
+				<div>
+					<b>{{passwordResetStatus}}</b>
+				</div>
+
+				<br>
+				<a ng-click="forgotPassword()" class="btn btn-lg btn-primary btn-block">Send</a>
+			</div>
+			<div class="modal-footer">
+
+				<button type="button" ng-click="closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 

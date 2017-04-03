@@ -140,10 +140,51 @@
         </div>
 
         <br>
+
         <div class="dataTable_wrapper">
           <div ng-repeat="batchReport in batchReportList track by $index">
             <h3>{{batchReport.name}}</h3>
-            <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered">
+
+            <table ng-if="batchReport.isCrossDate" st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered">
+              <thead>
+
+                <tr class="small">
+                  <th class="text-center" rowspan="2">Day</th>
+                  <th class="text-center" colspan="2">TIME In</th>
+                  <th class="text-center" colspan="2">TIME OUT</th>
+                  <th class="text-center" rowspan="2">Hours</th>
+                  <th class="text-center" rowspan="2">Minutes</th>
+                </tr>
+
+                <tr class="small">
+                  <th class="text-center">Date</th>
+                  <th class="text-center">Time</th>
+                  <th class="text-center">Date</th>
+                  <th class="text-center">Time</th>
+                </tr>
+
+              </thead>
+              <tbody>
+                <tr ng-repeat="row in batchReport.dataLogs | limitTo:31 track by $index ">
+                  <td class="text-center"><b>{{$index + 1}}</b></td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitDate(row.attributes.loginDate)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitTime(row.attributes.loginDate)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitDate(row.attributes.logoutDate)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitTime(row.attributes.logoutDate)}}</td>
+                  <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
+                  <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
+                </tr>
+                <tr ng-hide="!batchReport.dataLogs.length > 0">
+                  <td colspan="5" class="text-right">Total</td>
+                  <td colspan="2" class="text-center"><span ng-show="isShowTotalTime">{{Math.round(batchReport.totalTime.hours)}} hrs {{Math.abs(batchReport.totalTime.mins)}} mins</span></td>
+                </tr>
+                <tr ng-hide="batchReport.dataLogs.length > 0">
+                  <td colspan="9" class="text-center">Empty Report List.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table ng-if="!batchReport.isCrossDate" st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered">
               <thead>
 
                 <tr class="small">
@@ -184,8 +225,7 @@
             </table>
             <hr>
           </div>
-
-      </div>
+        </div>
 
 
         <div class="dataTable_wrapper" id="printable" style="display:none;">
@@ -240,7 +280,7 @@
               </div>
 
 
-              <div>
+              <div ng-if="!batchReport.isCrossDate">
                 <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered" style="border: 1px solid black !important;">
                   <thead>
 
@@ -267,6 +307,47 @@
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.departureAM}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.arrivalPM}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.departurePM}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
+                    </tr>
+                    <tr ng-hide="displayedCollect.length > 0">
+                      <td colspan="5" class="text-right" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">Total</td>
+                      <td colspan="2" class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;"><span ng-show="isShowTotalTime">{{parseTotalInPrint(batchReport.totalTime)}}</span></td>
+                    </tr>
+                    <!-- <tr ng-hide="<displayedCollect></displayedCollect>ion.length > 0">
+                    <td colspan="7" class="text-center">Empty Report List.</td>
+                  </tr> -->
+
+                </tbody>
+                </table>
+              </div>
+
+              <div ng-if="batchReport.isCrossDate">
+                <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered" style="border: 1px solid black !important;">
+                  <thead>
+                    <tr class="small">
+                      <th class="text-center" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;" rowspan="2">Day</th>
+                      <th class="text-center" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;" colspan="2">TIME IN</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;" colspan="2">TIME OUT</span></th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;" rowspan="2">HOURS</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;" rowspan="2">Minutes</th>
+                    </tr>
+
+                    <tr class="small">
+                      <th class="text-center" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Day</th>
+                      <th class="text-center" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Time</span></th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Date</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Time</th>
+                    </tr>
+
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="row in batchReport.dataLogs track by $index" class="small" style="font-size:72% !important;">
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;"><b>{{$index + 1}}</b></td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitDate(row.attributes.loginDate)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitTime(row.attributes.loginDate)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitDate(row.attributes.logoutDate)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitTime(row.attributes.logoutDate)}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
                     </tr>
@@ -324,28 +405,38 @@
           </div>
 
         </div> -->
-        <h4><b>AM</b></h4><hr>
-        <label>Arrival</label><br>
-        <input ng-model="newReportData.arrivalAM" /><br>
-        <label>Departure</label><br>
-        <input ng-model="newReportData.departureAM" /><br>
-        <hr><h4><b>PM</b></h4><hr>
-        <label>Arrival</label><br>
-        <input ng-model="newReportData.arrivalPM" /><br>
-        <label>Departure</label><br>
-        <input ng-model="newReportData.departurePM" /><br>
-        <hr>
-        <label>Extra Logs</label><br>
-        <div ng-repeat="extraLog in newReportData.extraLogPool track by $index">
-          <div class="row">
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <label for="removeButton">{{extraLog}}</label>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <button id="removeButton" ng-click="removeExtraLogs($index, newReportData)" type="button" class="btn btn-danger fa fa-times"></button>
+        <div ng-if="!newReportData.employee.isCrossDate">
+          <h4><b>AM</b></h4><hr>
+          <label>Arrival</label><br>
+          <input ng-model="newReportData.arrivalAM" /><br>
+          <label>Departure</label><br>
+          <input ng-model="newReportData.departureAM" /><br>
+          <hr><h4><b>PM</b></h4><hr>
+          <label>Arrival</label><br>
+          <input ng-model="newReportData.arrivalPM" /><br>
+          <label>Departure</label><br>
+          <input ng-model="newReportData.departurePM" /><br>
+          <hr>
+          <label>Extra Logs</label><br>
+          <div ng-repeat="extraLog in newReportData.extraLogPool track by $index">
+            <div class="row">
+              <div class="col-xs-3 col-md-3 col-lg-3">
+                <label for="removeButton">{{extraLog}}</label>
+              </div>
+              <div class="col-xs-3 col-md-3 col-lg-3">
+                <button id="removeButton" ng-click="removeExtraLogs($index, newReportData)" type="button" class="btn btn-danger fa fa-times"></button>
+              </div>
             </div>
           </div>
         </div>
+        <div ng-if="newReportData.employee.isCrossDate">
+          <h4><b>Cross-Date</b></h4><hr>
+          <label>Login</label><br>
+          <input placeholder="ex: 08:30h 12/25/2016" ng-model="newReportData.loginDate" /><br>
+          <label>Logout</label><br>
+          <input placeholder="ex: 22:30h 12/25/2016" ng-model="newReportData.logoutDate" /><br>
+        </div>
+
         <hr>
         <label>Total</label><br>
         <input type="number" max="8" min="0" ng-model="newReportData.totalTime.hours" /> Hours <input type="number" min="0" max="59" ng-disabled="disableEdit" ng-model="newReportData.totalTime.minutes" /> Minutes <br>

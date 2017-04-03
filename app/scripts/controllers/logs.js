@@ -45,7 +45,7 @@ angular.module('sbAdminApp')
         $scope.numberOfLogs = results;
         $scope.numberOfPages = [];
 
-        var displayLimit = 100;
+        var displayLimit = 500;
         var tmp = results;
         tmp = tmp / displayLimit;
         tmp = Math.ceil(tmp);

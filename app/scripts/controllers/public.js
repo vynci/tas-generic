@@ -192,20 +192,45 @@ angular.module('sbAdminApp')
       return data.indexOf(compare) > -1;
     }
 
+    socket.on('notificationsFromServer', function(data){
+      console.log(data);
+      getEditReportRequests();
+      if(stringContains(data, 'request-empty')){
+        $scope.showNotifcations = false;
+      }else{
+        $scope.showNotifcations = true;
+      }
+
+    });
+
     socket.on('fromPublicServer', function(data){
+      console.log(data);
       if(typeof data === 'object'){
 
-        $scope.detectedEmployee = {
-          'firstName' : data.firstName,
-          'lastName' : data.lastName,
-          'position' : data.position,
-          'avatar' : data.avatarUrl,
-          'time' : $scope.time,
-          'arrivalAM' : data.departArrive.arrivalAM,
-          'departureAM' : data.departArrive.departureAM,
-          'arrivalPM' : data.departArrive.arrivalPM,
-          'departurePM' : data.departArrive.departurePM
+        if(data.departArrive){
+          $scope.detectedEmployee = {
+            'firstName' : data.firstName,
+            'lastName' : data.lastName,
+            'position' : data.position,
+            'avatar' : data.avatarUrl,
+            'time' : $scope.time,
+            'arrivalAM' : data.departArrive.arrivalAM,
+            'departureAM' : data.departArrive.departureAM,
+            'arrivalPM' : data.departArrive.arrivalPM,
+            'departurePM' : data.departArrive.departurePM
+          }
+        }else{
+          $scope.detectedEmployee = {
+            'firstName' : data.firstName,
+            'lastName' : data.lastName,
+            'position' : data.position,
+            'avatar' : data.avatarUrl,
+            'time' : $scope.time,
+            'loginDate' : data.currentPeriodLog.loginDate,
+            'logoutDate' : data.currentPeriodLog.logoutDate,
+          }
         }
+
         $scope.isFingerPrintDetected = true;
         getAll();
         setTimeout(function(){

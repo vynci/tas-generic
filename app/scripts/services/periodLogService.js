@@ -37,7 +37,7 @@ app.service('periodLogService', function($q) {
 		var defer = $q.defer();
 		var PeriodLog = Parse.Object.extend("PeriodLog");
 		var query = new Parse.Query(PeriodLog);
-		var displayLimit = 100;
+		var displayLimit = 500;
 
 		query.descending('periodDate');
 

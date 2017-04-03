@@ -44,15 +44,19 @@ angular.module('sbAdminApp')
 
     $scope.fromSelectedDate = {
       day : 1,
-      year : 2016,
-      month : "January"
+      year : dateNow.getFullYear(),
+      month : monthNames[dateNow.getMonth()]
     }
+
+    console.log($scope.fromSelectedDate);
 
     $scope.toSelectedDate = {
       day : 1,
-      year : 2016,
-      month : "January"
+      year : dateNow.getFullYear(),
+      month : monthNames[dateNow.getMonth()]
     }
+
+    console.log($scope.toSelectedDate);
 
     $scope.Math = window.Math;
     $scope.tmpId = false;
@@ -172,7 +176,7 @@ angular.module('sbAdminApp')
       return minute;
     }
 
-    function generateReportTemplate(employeeId, date, employeeName){
+    function generateReportTemplate(employeeId, date, employeeName, isCrossDate){
       var arr = [];
       for(var i=0; i<31; i++ ){
         var blankEntry = {
@@ -187,7 +191,10 @@ angular.module('sbAdminApp')
             arrivalAM : '-',
             arrivalPM : '-',
             departureAM : '-',
-            departurePM : '-'
+            departurePM : '-',
+            loginDate : '-',
+            logoutDate : '-',
+            isCrossDate : isCrossDate
           }
         };
         arr.push(blankEntry);
@@ -301,7 +308,8 @@ angular.module('sbAdminApp')
             periodDate : data.attributes.periodDate,
             employee : {
               id : data.attributes.employeeId,
-              name : data.attributes.employeeName || data.attributes.name
+              name : data.attributes.employeeName || data.attributes.name,
+              isCrossDate : data.attributes.isCrossDate || false
             }
           }
         }else{
@@ -313,17 +321,21 @@ angular.module('sbAdminApp')
             arrivalPM : $scope.editReportRow.get('arrivalPM'),
             departureAM : $scope.editReportRow.get('departureAM'),
             departurePM : $scope.editReportRow.get('departurePM'),
+            loginDate : $scope.editReportRow.get('loginDate'),
+            logoutDate : $scope.editReportRow.get('logoutDate'),
             totalTime : minutesToHours(parseInt($scope.editReportRow.get('totalTime')) || 0),
             extraLogPool : $scope.editReportRow.get('extraLogPool'),
             periodDate : data.attributes.periodDate,
             employee : {
               id : data.attributes.employeeId,
-              name : data.attributes.employeeName || data.attributes.name
+              name : data.attributes.employeeName || data.attributes.name,
+              isCrossDate : data.attributes.isCrossDate || false
             }
           }
         }
       } else{
         console.log('new!');
+        console.log(data.attributes);
         $scope.showDeleteButton = false;
         var createdAt = new Date(data.attributes.date.month + ' ' + (data.attributes.date.day + 1) + ' ' + data.attributes.date.year);
         var PeriodLog = Parse.Object.extend("PeriodLog");
@@ -337,13 +349,16 @@ angular.module('sbAdminApp')
           periodDate : createdAt,
           employee : {
             id : data.attributes.employeeId,
-            name : data.attributes.employeeName || data.attributes.name
+            name : data.attributes.employeeName || data.attributes.name,
+            isCrossDate : data.attributes.isCrossDate || false
           },
           isValid : true,
           arrivalAM : '',
           arrivalPM : '',
           departureAM : '',
           departurePM : '',
+          loginDate : '',
+          logoutDate : '',
           totalTime : minutesToHours(0)
         }
         console.log($scope.newReportData);
@@ -380,6 +395,8 @@ angular.module('sbAdminApp')
         query.set("arrivalPM", $scope.newReportData.arrivalPM);
         query.set("departureAM", $scope.newReportData.departureAM);
         query.set("departurePM", $scope.newReportData.departurePM);
+        query.set("loginDate", $scope.newReportData.loginDate);
+        query.set("logoutDate", $scope.newReportData.logoutDate);
         query.set("extraLogPool", $scope.newReportData.extraLogPool);
         query.set("totalTime", totalTime.toString());
 
@@ -387,6 +404,7 @@ angular.module('sbAdminApp')
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
             console.log(result);
+            socket.emit('notifications', 'edit-request');
             $scope.generateLogs();
 
           },
@@ -406,7 +424,12 @@ angular.module('sbAdminApp')
         periodLog.set("arrivalPM", $scope.newReportData.arrivalPM);
         periodLog.set("departureAM", $scope.newReportData.departureAM);
         periodLog.set("departurePM", $scope.newReportData.departurePM);
+        periodLog.set("loginDate", $scope.newReportData.loginDate);
+        periodLog.set("logoutDate", $scope.newReportData.logoutDate);
         periodLog.set("extraLogPool", $scope.newReportData.extraLogPool);
+
+        periodLog.set("isCrossDate", $scope.newReportData.employee.isCrossDate);
+
         periodLog.set("totalTime", totalTime.toString());
 
         console.log(periodLog.attributes);
@@ -458,7 +481,8 @@ angular.module('sbAdminApp')
             id : value.id,
             name : value.attributes.firstName + ' ' +value.attributes.lastName,
             readableName : value.attributes.firstName + ' ' +value.attributes.lastName,
-            employeeId: value.attributes.employeeId
+            employeeId: value.attributes.employeeId,
+            isCrossDate : value.get('isCrossDate')
           };
           $scope.sortLists.push(tmp);
         });
@@ -508,12 +532,12 @@ angular.module('sbAdminApp')
 
 
 
-    function getLogByUser(id, min, max, isPrintAll, employeeName, employeeId){
+    function getLogByUser(id, min, max, isPrintAll, employeeName, employeeId, isCrossDate){
       periodLogService.getPeriodLogsByUser(id, min, max)
       .then(function(results) {
         // Handle the result
         var data = results;
-        var regularDays = generateReportTemplate(id, min, employeeName);
+        var regularDays = generateReportTemplate(id, min, employeeName, isCrossDate);
 
         angular.forEach(data, function(value, key) {
           value.sortDate = value.get('periodDate');
@@ -550,6 +574,12 @@ angular.module('sbAdminApp')
             value.set('employeeName', employeeName);
             value.set('employeeId', id);
 
+            if(isCrossDate){
+              value.set('loginDate', 'holiday');
+              value.set('logoutDate', 'holiday');
+              value.set('isCrossDate', true);
+            }
+
             value.sortDate = value.get('startTime');
 
             var tmpDay = value.get('startTime');
@@ -579,6 +609,7 @@ angular.module('sbAdminApp')
             employeeId : employeeId,
             name : employeeName,
             dataLogs : regularDays,
+            isCrossDate : isCrossDate || false,
             totalTime : {
               hours : totalTimeHours,
               mins : totalTimeMins
@@ -606,6 +637,7 @@ angular.module('sbAdminApp')
         $scope.tmpId = item.id;
         $scope.employeeInfo.name = item.name;
         $scope.employeeInfo.employeeId = item.employeeId;
+        $scope.employeeInfo.isCrossDate = item.isCrossDate;
       }
       else{
         $scope.tmpId = false;
@@ -641,13 +673,14 @@ angular.module('sbAdminApp')
       if($scope.tmpId === 'all'){
         angular.forEach($scope.sortLists, function(value, key) {
           if(value.id !== 'all'){
-            getLogByUser(value.id, min, max, true, value.name, value.employeeId);
+            console.log(value);
+            getLogByUser(value.id, min, max, true, value.name, value.employeeId, value.isCrossDate);
           }
-
         });
 
       } else {
-        getLogByUser($scope.tmpId, min, max, false, $scope.employeeInfo.name, $scope.employeeInfo.employeeId);
+        console.log($scope.employeeInfo);
+        getLogByUser($scope.tmpId, min, max, false, $scope.employeeInfo.name, $scope.employeeInfo.employeeId, $scope.employeeInfo.isCrossDate);
       }
     }
 
@@ -701,6 +734,39 @@ angular.module('sbAdminApp')
           // error is a Parse.Error with an error code and message.
         }
       });
+    }
+
+    $scope.splitTime = function(time){
+      console.log(time);
+      var result = '-';
+
+      if(time === '-' || time === 'holiday'){
+          if(time === 'holiday'){
+            result = 'holiday';
+          }
+      }else{
+        result = time.split(' ');
+        result = result[0];
+      }
+
+
+      return result;
+    }
+
+    $scope.splitDate = function(date){
+      var result = '-';
+
+      if(date === '-' || date === 'holiday'){
+        if(date === 'holiday'){
+          result = 'holiday';
+        }
+      }else{
+        result = date.split(' ');
+        result = result[1];
+      }
+
+
+      return result;
     }
 
     $scope.printDiv = function(divName) {

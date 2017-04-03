@@ -41,10 +41,15 @@
                 <tr ng-repeat="row in displayedCollection | limitTo:300 track by $index">
                   <td><b>{{row.attributes.name}}</b></td>
                   <td><b>{{convertDate(row.attributes.periodDate)}}</b></td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.arrivalAM != null, logBlockBad: row.attributes.arrivalAM == null || row.attributes.arrivalAM == ''}" style="cursor:pointer;">{{row.attributes.arrivalAM}}</td>
+                  <td class="text-center" ng-if="row.attributes.isCrossDate" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" style="cursor:pointer;">{{row.attributes.arrivalAM || row.attributes.loginDate}}</td>
+                  <td class="text-center" ng-if="!row.attributes.isCrossDate" ng-class="{logBlockGood: row.attributes.arrivalAM != null, logBlockBad: row.attributes.arrivalAM == null || row.attributes.arrivalAM == ''}" style="cursor:pointer;">{{row.attributes.arrivalAM || row.attributes.loginDate}}</td>
+
                   <td class="text-center" ng-class="{logBlockGood: row.attributes.departureAM != null, logBlockBad: row.attributes.departureAM == null  || row.attributes.departureAM == ''}" style="cursor:pointer;">{{row.attributes.departureAM}}</td>
                   <td class="text-center" ng-class="{logBlockGood: row.attributes.arrivalPM != null, logBlockBad: row.attributes.arrivalPM == null || row.attributes.arrivalPM == ''}" style="cursor:pointer;">{{row.attributes.arrivalPM}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.departurePM != null, logBlockBad: row.attributes.departurePM == null || row.attributes.arrivalPM == ''}" style="cursor:pointer;">{{row.attributes.departurePM}}</td>
+
+                  <td class="text-center" ng-if="row.attributes.isCrossDate" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" style="cursor:pointer;">{{row.attributes.departurePM || row.attributes.logoutDate}}</td>
+                  <td class="text-center" ng-if="!row.attributes.isCrossDate" ng-class="{logBlockGood: row.attributes.departurePM != null, logBlockBad: row.attributes.departurePM == null || row.attributes.arrivalPM == ''}" style="cursor:pointer;">{{row.attributes.departurePM || row.attributes.logoutDate}}</td>
+
                   <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" style="cursor:pointer;">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
                   <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" style="cursor:pointer;">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
                 </tr>

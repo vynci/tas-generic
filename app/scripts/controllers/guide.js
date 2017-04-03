@@ -10,8 +10,6 @@ angular.module('sbAdminApp')
   .controller('GuideCtrl', ['$scope', '$timeout', '$http', '$modalStack', 'settingsService', '$state', 'PDFViewerService', function ($scope, $timeout, $http, $modalStack, settingsService, $state, pdf) {
     getSettings();
 
-    $scope.pdfURL = "img/test.pdf";
-
     $scope.instance = pdf.Instance("viewer");
 
     $scope.totalPage = '';
@@ -78,6 +76,13 @@ angular.module('sbAdminApp')
       .then(function(results) {
         // Handle the result
         $scope.settings = results[0];
+        var hardwareType = $scope.settings.get('hardwareType');
+        if(hardwareType === 'generic'){
+          $scope.pdfURL = "img/tas-genericmanual.pdf";
+        }else{
+          $scope.pdfURL = "img/tas-civil-service-manual.pdf";
+        }
+
 
         $scope.isFirstBoot = $scope.settings.get('firstBoot');
         console.log($scope.isFirstBoot);

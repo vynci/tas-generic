@@ -12,14 +12,14 @@
 		</div>
 
 		<div class="col-md-4">
-			<div ng-if="editReportRequests.length" class="panel panel-default" style="background: white; opacity: 0.8;">
+			<!-- <div ng-if="editReportRequests.length" class="panel panel-default" style="background: white; opacity: 0.8;">
 				<div class="panel-heading">
 					Edit Report Requests
 				</div>
 				<div class="panel-body">
 					<h1 style="text-align: center; color: red;"><b>{{editReportRequests.length}}</b></h1>
 				</div>
-			</div>
+			</div> -->
 		</div>
 		<div class="col-md-2">
 
@@ -34,7 +34,7 @@
 
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px;" ng-click="redirectToLogin()">
-				<h1 class="text-center public-clock-time"><b>{{time}}</b></h1>
+				<h1 class="text-center public-clock-time"><b>{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
 				<h4 class="text-center public-clock-date">{{currentDate}}</h4>
 			</div>
 		</div>
@@ -132,21 +132,21 @@
 					<div class="panel-footer">
 						<div class="row">
 							<div class="col-md-6">
-								<h4 class="text-center"><b>Log-in:</b> {{detectedEmployee.arrivalAM}}</h4>
+								<h4 class="text-center"><b>Log-in:</b> {{detectedEmployee.arrivalAM || detectedEmployee.loginDate}}</h4>
 							</div>
 
 							<div class="col-md-6">
-								<h4 class="text-center"><b>Break-in:</b> {{detectedEmployee.arrivalPM}}</h4>
+								<h4 class="text-center"><b>Break-in:</b> {{detectedEmployee.arrivalPM || ''}}</h4>
 							</div>
 						</div>
 
 						<div class="row">
 							<div class="col-md-6">
-								<h4 class="text-center"><b>Break-out:</b> {{detectedEmployee.departureAM}}</h4>
+								<h4 class="text-center"><b>Break-out:</b> {{detectedEmployee.departureAM || ''}}</h4>
 							</div>
 
 							<div class="col-md-6">
-								<h4 class="text-center"><b>Log-out:</b> {{detectedEmployee.departurePM}}</h4>
+								<h4 class="text-center"><b>Log-out:</b> {{detectedEmployee.departurePM || detectedEmployee.logoutDate}}</h4>
 							</div>
 						</div>
 

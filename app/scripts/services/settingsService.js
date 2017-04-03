@@ -64,6 +64,19 @@ app.service('settingsService', function($q, $http) {
 		return def.promise;
 	}
 
+	var reformatFingerPrint = function(userId) {
+		var def = $q.defer();
+
+		$http.get("http://172.24.1.1:1337/admin/reformat-fingerprint")
+		.success(function(data) {
+			def.resolve(data);
+		})
+		.error(function() {
+			def.reject("Failed to reset password");
+		});
+		return def.promise;
+	}
+
 	var updateWifiCredentials = function(data){
 
 		var def = $q.defer();
@@ -116,7 +129,8 @@ app.service('settingsService', function($q, $http) {
 		updateSystemTime : updateSystemTime,
 		backup : backup,
 		adminPasswordReset : adminPasswordReset,
-		powerOff : powerOff		
+		powerOff : powerOff,
+		reformatFingerPrint : reformatFingerPrint
 	};
 
 });

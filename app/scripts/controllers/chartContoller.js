@@ -85,6 +85,7 @@ angular.module('sbAdminApp')
     'firstName' : '',
     'lastName' : '',
     'gender' : 'Male',
+    'isCrossDate' : 'false',
     'age' : ''
   }
 
@@ -139,6 +140,7 @@ angular.module('sbAdminApp')
     $scope.user.firstName = '';
     $scope.user.lastName = '';
     $scope.user.gender = 'Male';
+    $scope.user.isCrossDate = 'false';
     $scope.user.age = '';
     $scope.user.position = '';
     $scope.previewImage = '';
@@ -182,6 +184,14 @@ angular.module('sbAdminApp')
       $scope.detectedRFID = result[0].get('rfId');
       $scope.previewImage = result[0].get('avatarUrl');
 
+      $scope.user.isCrossDate = result[0].get('isCrossDate');
+
+      if($scope.user.isCrossDate){
+        $scope.user.isCrossDate = "true";
+      }else{
+        $scope.user.isCrossDate = "false";
+      }
+
       currentEmployee = result[0];
     }, function(err) {
       // Error occurred
@@ -201,6 +211,12 @@ angular.module('sbAdminApp')
     currentEmployee.set("age", $scope.user.age);
     currentEmployee.set("position", $scope.user.position);
     currentEmployee.set("rfId", $scope.user.rfId);
+
+    if($scope.user.isCrossDate === 'true'){
+      currentEmployee.set("isCrossDate", true);
+    }else{
+      currentEmployee.set("isCrossDate", false);
+    }
 
     if($scope.isCurrentFingerDeleted){
       var fingerPrintId = fingerPrintIdPool[0];
@@ -364,6 +380,7 @@ angular.module('sbAdminApp')
         $scope.user.firstName = '';
         $scope.user.lastName = '';
         $scope.user.gender = 'Male';
+        $scope.user.isCrossDate = 'false';
         $scope.user.age = '';
         $scope.user.position = '';
         $scope.previewImage = '';
@@ -502,6 +519,12 @@ angular.module('sbAdminApp')
         employee.set("rfId", $scope.user.rfId);
         employee.set("currentPeriodLog", {"id":null,"date":null,"sequence":0,"totalTime":0});
 
+        if($scope.user.isCrossDate === 'true'){
+          employee.set("isCrossDate", true);
+        }else{
+          employee.set("isCrossDate", false);
+        }
+
         employee.save(null, {
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
@@ -557,6 +580,12 @@ angular.module('sbAdminApp')
       employee.set("fingerPrintId", fingerPrintId.toString());
       employee.set("rfId", $scope.user.rfId);
       employee.set("currentPeriodLog", {"id":null,"date":null,"sequence":0,"totalTime":0});
+
+      if($scope.user.isCrossDate === 'true'){
+        employee.set("isCrossDate", true);
+      }else{
+        employee.set("isCrossDate", false);
+      }
 
       employee.save(null, {
         success: function(result) {

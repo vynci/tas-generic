@@ -7,7 +7,7 @@
 * Controller of the sbAdminApp
 */
 angular.module('sbAdminApp')
-.controller('EditReportsCtrl', function($scope,$position, socket, employeeService, dailyLogService, periodLogService, settingsService, $state, holidayService, lodash, $timeout, editReportRequests) {
+.controller('EditReportsCtrl', function($scope,$position, socket, employeeService, dailyLogService, periodLogService, settingsService, $state, holidayService, lodash, $timeout, editReportRequests, $window) {
 	console.log('Edit Report Logs!');
 
 	$scope.isAuthenticated = false;
@@ -49,6 +49,9 @@ angular.module('sbAdminApp')
 			// Handle the result
 			console.log(results);
 			$scope.rowCollection = results;
+			if(!results.length){
+				socket.emit('notifications', 'request-empty');
+			}
 
 			return results;
 		}, function(err) {
@@ -81,6 +84,79 @@ angular.module('sbAdminApp')
 		New : 'green'
 	}
 
+	$scope.openChangePasswordModal = function(){
+		$scope.changePasswordStatus = '';
+		$scope.currentSecondaryPassword = '';
+		$scope.newSecondaryPassword = '';
+		$scope.confirmNewSecondaryPassword = '';
+	}
+
+	$scope.changePassword = function(){
+		if($scope.secondaryPassword === $scope.currentSecondaryPassword){
+			if($scope.newSecondaryPassword === $scope.confirmNewSecondaryPassword){
+				var Settings = Parse.Object.extend("Settings");
+				var settings = new Settings();
+
+				settings.id = settingId;
+
+				settings.set("secondaryPassword", $scope.newSecondaryPassword);
+
+				settings.save(null, {
+					success: function(result) {
+						alert('Change Password Success!.');
+						$window.location.reload();
+					},
+					error: function(gameScore, error) {
+						$scope.changePasswordStatus = 'Error, Something went wrong. Please Try again.'
+					}
+				});
+
+			}else{
+				$scope.changePasswordStatus = 'New password does not match.';
+			}
+		} else{
+			$scope.changePasswordStatus = 'Invalid Current Password.';
+		}
+
+	}
+
+	$scope.forgotPassword = function(){
+		if($scope.forgotPasswordIndicator){
+			var currentForgotPasswordIndicator = $scope.settings.get('currentForgotPasswordIndicator');
+			var validKey = $scope.settings.get('forgotSecondaryPasswordPool');
+			validKey = validKey[currentForgotPasswordIndicator];
+
+			if($scope.forgotPasswordIndicator !== validKey){
+				$scope.passwordResetStatus = 'Invalid Secret Key.';
+			}else{
+
+				var Settings = Parse.Object.extend("Settings");
+				var settings = new Settings();
+
+				settings.id = settingId;
+
+				settings.set("secondaryPassword", 'admin2');
+
+				if(currentForgotPasswordIndicator === 2){
+					settings.set("currentForgotPasswordIndicator", 0);
+				}else{
+					settings.set("currentForgotPasswordIndicator", currentForgotPasswordIndicator + 1);
+				}
+
+				settings.save(null, {
+					success: function(result) {
+						alert('Success! Password was reset to "admin2".');
+						$window.location.reload();
+					},
+					error: function(gameScore, error) {
+						$scope.passwordResetStatus = 'Error, Something went wrong. Please Try again.'
+					}
+				});
+			}
+		}
+
+	}
+
 	$scope.requestAction = function(){
 		console.log($scope.confirmType);
 		if($scope.confirmType === 'accept'){
@@ -99,6 +175,8 @@ angular.module('sbAdminApp')
 			periodLog.set("arrivalPM", $scope.currentRequest.get('arrivalPM'));
 			periodLog.set("departureAM", $scope.currentRequest.get('departureAM'));
 			periodLog.set("departurePM", $scope.currentRequest.get('departurePM'));
+			periodLog.set("loginDate", $scope.currentRequest.get('loginDate'));
+			periodLog.set("logoutDate", $scope.currentRequest.get('logoutDate'));
 			periodLog.set("extraLogPool", $scope.currentRequest.get('extraLogPool'));
 			periodLog.set("totalTime", $scope.currentRequest.get('totalTime'));
 
