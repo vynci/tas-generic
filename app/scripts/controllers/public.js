@@ -29,15 +29,19 @@ angular.module('sbAdminApp')
       'avatar' : '"img/logo/logo_placeholder.png";'
     }
 
+    var userLoginterval = 60;
+
     $scope.isFingerPrintDetected = false;
     $scope.isPublicTable = true;
-
+    $scope.isFlashDriveEmpty = true;
 
     startTime();
 
     getSettings();
 
     getEditReportRequests();
+
+    getMedia();
 
     function getEditReportRequests(){
       editReportRequests.getAll()
@@ -50,6 +54,21 @@ angular.module('sbAdminApp')
         console.log(err);
       });
     };
+
+    function getMedia(){
+      settingsService.getMedia()
+      .then(function(results) {
+        if(results.status === 200){
+          $scope.isFlashDriveEmpty = false;
+        }else{
+          alert('Backup System: Flash-drive not found!');
+        }
+      }, function(err) {
+        // Error occurred
+        alert('Backup System: Flash-drive not found!');
+        console.log(err);
+      });
+    }
 
     $scope.redirectToLogin = function(){
       $state.go('login');
@@ -68,18 +87,29 @@ angular.module('sbAdminApp')
       .then(function(results) {
         // Handle the result
 
+
+
         if(results[0].get('firstBoot')){
           $state.go('guide');
         }
 
         else{
           $scope.settings = results[0];
+          userLoginterval = $scope.settings.get('userLogInterval') || 60;
           $scope.primaryPhoto = $scope.settings.get('primaryPhoto');
           $scope.secondaryPhoto = $scope.settings.get('secondaryPhoto');
           $scope.cutoffTime = $scope.settings.get('cutoffTime');
           $scope.coverImage = {
             "background-image": "url(" + $scope.settings.get('coverImage') + ")"
           };
+
+          var colorThemes = $scope.settings.get('colorThemes');
+
+          $scope.clockColor = {
+            background: {'background-color': colorThemes.clockBackground},
+            text: {color: colorThemes.clockText}
+          }
+
         }
 
         getAll();
@@ -193,18 +223,25 @@ angular.module('sbAdminApp')
     }
 
     socket.on('notificationsFromServer', function(data){
-      console.log(data);
       getEditReportRequests();
       if(stringContains(data, 'request-empty')){
         $scope.showNotifcations = false;
-      }else{
+      }else if(stringContains(data, 'log-interval')){
+        $scope.isUserInterval = true;
+        $scope.timeLeft = data.split(':');
+        $scope.timeLeft = userLoginterval - parseInt($scope.timeLeft[1]);
+        setTimeout(function(){
+          $scope.isUserInterval = false
+        },1500);
+
+        $scope.showNotifcations = false;
+      }
+      else{
         $scope.showNotifcations = true;
       }
-
     });
 
     socket.on('fromPublicServer', function(data){
-      console.log(data);
       if(typeof data === 'object'){
 
         if(data.departArrive){

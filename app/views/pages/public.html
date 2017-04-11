@@ -6,7 +6,7 @@
 	<br>
 	<div class="row" >
 		<div class="col-md-2">
-			<img ng-src="{{secondaryPhoto}}" style="height: 130px;">
+			<img ng-src="{{secondaryPhoto}}" style="height: 130px; max-height: 130px;">
 		</div>
 		<div class="col-md-2">
 		</div>
@@ -24,8 +24,8 @@
 		<div class="col-md-2">
 
 		</div>
-		<div class="col-md-2">
-			<img ng-src="{{primaryPhoto}}" style="width: 100%">
+		<div class="col-md-2" style="text-align: right;">
+			<img ng-src="{{primaryPhoto}}" style="height: 130px; max-height: 130px;">
 		</div>
 	</div>
 
@@ -33,9 +33,14 @@
 		<br>
 
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px;" ng-click="redirectToLogin()">
-				<h1 class="text-center public-clock-time"><b>{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
-				<h4 class="text-center public-clock-date">{{currentDate}}</h4>
+			<div class="col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px; height: 180px; max-height: 180px;" ng-style="clockColor.background" ng-click="redirectToLogin()">
+				<div ng-if="!isUserInterval">
+					<h1 class="text-center public-clock-time" ng-style="clockColor.text"><b>{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
+					<h4 class="text-center public-clock-date" ng-style="clockColor.text">{{currentDate}} <span ng-if="isFlashDriveEmpty" style="color: red; font-size: 35px;" class="fa fa-flash"></span></h4>
+				</div>
+				<div ng-if="isUserInterval">
+					<h1 style="text-align: center;">You just logged, Please wait for {{timeLeft}} seconds to log again.</h1>
+				</div>
 			</div>
 		</div>
 		<br>
@@ -116,12 +121,17 @@
 						<h4 class="text-center">{{currentDate}}</h4>
 					</div>
 					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-2 col-lg-2">
 
-						<div class="text-center">
-							<img ng-src="{{detectedEmployee.avatar}}" style="width: 230px;">
+							</div>
+							<div class="col-md-8 col-lg-8" style="text-align:center;">
+								<img ng-src="{{detectedEmployee.avatar}}" style="height: 215px; max-height: 215px;">
+							</div>
+							<div class="col-md-2 col-lg-2">
+
+							</div>
 						</div>
-
-						<br>
 
 						<h4 class="text-center">{{detectedEmployee.firstName}} {{detectedEmployee.lastName}}</h4>
 						<h5 class="text-center"><b>Name</b></h5>

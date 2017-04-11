@@ -102,12 +102,12 @@
         <div ng-if="isDTRHeaderCustomizable == 'true'">
           <div class="form-group">
             <label for="exampleInputName2">Subtitle 1: </label>
-            <input type="text" class="form-control" ng-model="companyNameSubtitle1" placeholder="Ex: Address">
+            <input type="text" class="form-control" ng-model="companyNameSubtitles.primary" placeholder="Ex: Address">
           </div>
 
           <div class="form-group">
             <label for="exampleInputName2">Subtitle 2: </label>
-            <input type="text" class="form-control" ng-model="companyNameSubtitle2" placeholder="Ex: Contact Information">
+            <input type="text" class="form-control" ng-model="companyNameSubtitles.secondary" placeholder="Ex: Contact Information">
           </div>
         </div>
 
@@ -269,6 +269,35 @@
             <option value="white">White</option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="inputPassword3" class="control-label text-left">Clock Background </label>
+          <select class="form-control" ng-model="colorThemes.clockBackground">
+            <option value="#f5f5f5">Gray</option>
+            <option value="#e74c3c">Red</option>
+            <option value="#2ecc71">Green</option>
+            <option value="#3498db">Blue</option>
+            <option value="#9b59b6">Violet</option>
+            <option value="#f1c40f">Yellow</option>
+            <option value="#141414">Black</option>
+            <option value="white">White</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="inputPassword3" class="control-label text-left">Clock Text</label>
+          <select class="form-control" ng-model="colorThemes.clockText">
+            <option value="#f5f5f5">Gray</option>
+            <option value="#e74c3c">Red</option>
+            <option value="#2ecc71">Green</option>
+            <option value="#3498db">Blue</option>
+            <option value="#9b59b6">Violet</option>
+            <option value="#f1c40f">Yellow</option>
+            <option value="#141414">Black</option>
+            <option value="white">White</option>
+          </select>
+        </div>
+
         <br>
         <div class="form-group">
           <button type="button" class="btn btn-primary btn-block" ng-click="updateColorThemes()">Save</button>

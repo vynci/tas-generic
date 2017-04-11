@@ -53,8 +53,10 @@ angular.module('sbAdminApp')
         $scope.previewImage2 = $scope.settings.get('secondaryPhoto');
         $scope.previewImage3 = $scope.settings.get('coverImage');
         $scope.companyName = $scope.settings.get('companyName');
-        $scope.companyNameSubtitle1 = $scope.settings.get('companyNameSubtitle1');
-        $scope.companyNameSubtitle2 = $scope.settings.get('companyNameSubtitle2');
+        $scope.companyNameSubtitles = {
+          primary : $scope.settings.get('companyNameSubtitle1'),
+          secondary : $scope.settings.get('companyNameSubtitle2')
+        }
         $scope.inCharge = $scope.settings.get('inCharge');
 
         $scope.colorThemes = $scope.settings.get('colorThemes');
@@ -310,9 +312,11 @@ angular.module('sbAdminApp')
 
         settings.id = settingId;
 
+        console.log($scope.companyNameSubtitles);
+
         settings.set("companyName", $scope.companyName);
-        settings.set("companyNameSubtitle1", $scope.companyNameSubtitle1);
-        settings.set("companyNameSubtitle2", $scope.companyNameSubtitle2);
+        settings.set("companyNameSubtitle1", $scope.companyNameSubtitles.primary);
+        settings.set("companyNameSubtitle2", $scope.companyNameSubtitles.secondary);
         settings.set("inCharge", $scope.inCharge);
 
         if($scope.isShowTotalTime === "true"){

@@ -14,6 +14,16 @@ angular.module('sbAdminApp')
     console.log('COnfigh!');
     getSettings();
 
+    $scope.superAdmin = {
+      password : ''
+    }
+
+    $scope.configPassword = {
+      value : ''
+    }
+
+    $scope.isAuthenticated = false;
+
     function getSettings(){
       settingsService.getSetting()
       .then(function(results) {
@@ -21,13 +31,24 @@ angular.module('sbAdminApp')
         $scope.settings = results[0];
 
         $scope.applicationVersion = $scope.settings.get('version');
-        $scope.settingsProductId = $scope.settings.get('productId');
+        $scope.userLogInterval = {
+          value : $scope.settings.get('userLogInterval')
+        };
+        $scope.settingsProductId = {
+          value : $scope.settings.get('productId')
+        };
         $scope.settingsFirstBoot = $scope.settings.get('firstBoot');
         $scope.settingsConfigPassword = $scope.settings.get('configPassword');
 
-        $scope.isSecondaryPassword = $scope.settings.get('isSecondaryPassword');
-        $scope.enableRFID = $scope.settings.get('enableRFID');
-        $scope.hardwareType = $scope.settings.get('hardwareType');
+        $scope.isSecondaryPassword = {
+          value : $scope.settings.get('isSecondaryPassword')
+        };
+        $scope.enableRFID = {
+          value : $scope.settings.get('enableRFID')
+        };
+        $scope.hardwareType = {
+          value : $scope.settings.get('hardwareType')
+        };
         $scope.secondaryPasswordFromDatabase = $scope.settings.get('secondaryPassword');
         var forgotSecondaryPasswordPool = $scope.settings.get('forgotSecondaryPasswordPool');
 
@@ -37,17 +58,19 @@ angular.module('sbAdminApp')
           third : forgotSecondaryPasswordPool[2],
         };
 
-        if($scope.isSecondaryPassword){
-          $scope.isSecondaryPassword = "true";
+        if($scope.isSecondaryPassword.value){
+          $scope.isSecondaryPassword.value = "true";
         } else {
-          $scope.isSecondaryPassword = "false";
+          $scope.isSecondaryPassword.value = "false";
         }
 
-        if($scope.enableRFID){
-          $scope.enableRFID = "true";
+        if($scope.enableRFID.value){
+          $scope.enableRFID.value = "true";
         } else {
-          $scope.enableRFID = "false";
+          $scope.enableRFID.value = "false";
         }
+
+        getMedia();
 
       }, function(err) {
         // Error occurred
@@ -56,6 +79,51 @@ angular.module('sbAdminApp')
         console.log(percentComplete);
       });
     };
+
+    function getMedia(){
+      settingsService.getMedia()
+      .then(function(results) {
+        console.log(results);
+
+        if(results.status === 200){
+          $scope.mediaFileList = results.message;
+          $scope.isFlashDrivePresent = true;
+        }else{
+          $scope.isFlashDrivePresent = false;
+        }
+        // Handle the result
+      }, function(err) {
+        // Error occurred
+        alert('Flash-drive not found!');
+        console.log(err);
+      });
+    }
+
+    $scope.login = function(){
+      if($scope.superAdmin.password === 'gregorian0525'){
+        $scope.isAuthenticated = true;
+      }else{
+        alert('Invalid Config Password!');
+      }
+    }
+
+    $scope.updateUserLogInterval = function(){
+      console.log($scope.userLogInterval);
+      $scope.settings.set("userLogInterval", $scope.userLogInterval.value);
+
+      $scope.settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          alert('User Log Interval: successfully updated!');
+          getSettings();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          alert('update error!');
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+    }
 
     $scope.synchronizeTime = function(){
       // Sat May 28 00:16:11 PHT 2016
@@ -131,7 +199,7 @@ angular.module('sbAdminApp')
 
     $scope.updateSecondaryPassword = function(){
 
-      if($scope.isSecondaryPassword === "true"){
+      if($scope.isSecondaryPassword.value === "true"){
         $scope.settings.set("isSecondaryPassword", true);
       } else{
         $scope.settings.set("isSecondaryPassword", false);
@@ -155,7 +223,7 @@ angular.module('sbAdminApp')
 
     $scope.updateEnableRFID = function(){
 
-      if($scope.enableRFID === "true"){
+      if($scope.enableRFID.value === "true"){
         $scope.settings.set("enableRFID", true);
       } else{
         $scope.settings.set("enableRFID", false);
@@ -177,10 +245,11 @@ angular.module('sbAdminApp')
 
     $scope.updateHardwareType = function(){
 
-      if($scope.hardwareType === "generic"){
+      if($scope.hardwareType.value === "generic"){
         $scope.settings.set('hardwareType', 'generic');
         $scope.settings.set("isDTRHeaderCustomizable", true);
         $scope.settings.set('enableOvertimeOption', true);
+        $scope.settings.set('isCutOffTime', false);
       } else{
         $scope.settings.set('hardwareType', 'deped');
         $scope.settings.set('isCutOffTime', true);
@@ -207,7 +276,7 @@ angular.module('sbAdminApp')
 
     $scope.resetSecondaryPassword = function(){
 
-      if($scope.productIdCredentials === $scope.settingsProductId){
+      if($scope.productIdCredentials === $scope.settingsProductId.value){
         $scope.settings.set("secondaryPassword", 'admin1');
 
         $scope.settings.save(null, {
@@ -230,8 +299,9 @@ angular.module('sbAdminApp')
 
 
     $scope.saveSettings = function(){
-      if($scope.settingsConfigPassword === $scope.configPassword){
-        $scope.settings.set("productId", $scope.settingsProductId);
+      console.log($scope.configPassword);
+      if($scope.settingsConfigPassword === $scope.configPassword.value){
+        $scope.settings.set("productId", $scope.settingsProductId.value);
 
         $scope.settings.save(null, {
           success: function(result) {
