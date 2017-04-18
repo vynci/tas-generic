@@ -7,7 +7,7 @@
 * Controller of the sbAdminApp
 */
 angular.module('sbAdminApp')
-.controller('ChartCtrl', ['$scope', '$timeout', '$http', 'employeeService', 'socket', '$modalStack', 'settingsService', '$state', function ($scope, $timeout, $http, employeeService, socket, $modalStack, settingsService, $state) {
+.controller('ChartCtrl', ['$scope', '$timeout', '$http', 'employeeService', 'socket', '$modalStack', 'settingsService', '$state', function ($scope, $timeout, $http, employeeService, socket, $modalStack, settingsService, $state, $window) {
   var currentUser = Parse.User.current();
   if(!currentUser){
     $state.go('login');
@@ -255,6 +255,7 @@ angular.module('sbAdminApp')
                 $scope.userTableResult = [];
                 console.log(result);
                 getSettings();
+                $window.location.reload();
               },
               error: function(gameScore, error) {
                 // Execute any logic that should take place if the save fails.
@@ -290,6 +291,7 @@ angular.module('sbAdminApp')
               $scope.userTableResult = [];
               console.log(result);
               getSettings();
+              $window.location.reload();
             },
             error: function(gameScore, error) {
               // Execute any logic that should take place if the save fails.
@@ -543,6 +545,7 @@ angular.module('sbAdminApp')
                 $scope.userTableResult = [];
                 console.log(result);
                 getSettings();
+                $window.location.reload();
               },
               error: function(gameScore, error) {
                 // Execute any logic that should take place if the save fails.
@@ -605,6 +608,7 @@ angular.module('sbAdminApp')
               $scope.userTableResult = [];
               console.log(result);
               getSettings();
+              $window.location.reload();
             },
             error: function(gameScore, error) {
               // Execute any logic that should take place if the save fails.

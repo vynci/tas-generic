@@ -1,7 +1,5 @@
-<div class="container" ng-style="coverImage" style="background-color: #cccccc; background-size: cover; background-position-y: 50%;">
+<div class="container" ng-style="coverImage" style="background-color: #cccccc; background-size: cover; overflow-x: hidden; overflow-y: hidden;">
 	<div>
-
-
 	</div>
 	<br>
 	<div class="row" >
@@ -24,7 +22,7 @@
 		<div class="col-md-2">
 
 		</div>
-		<div class="col-md-2" style="text-align: right;">
+		<div class="col-md-2" style="text-align: left;">
 			<img ng-src="{{primaryPhoto}}" style="height: 130px; max-height: 130px;">
 		</div>
 	</div>
@@ -34,14 +32,23 @@
 
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px; height: 180px; max-height: 180px;" ng-style="clockColor.background" ng-click="redirectToLogin()">
-				<div ng-if="!isUserInterval">
+				<div>
 					<h1 class="text-center public-clock-time" ng-style="clockColor.text"><b>{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
 					<h4 class="text-center public-clock-date" ng-style="clockColor.text">{{currentDate}} <span ng-if="isFlashDriveEmpty" style="color: red; font-size: 35px;" class="fa fa-flash"></span></h4>
 				</div>
-				<div ng-if="isUserInterval">
-					<h1 style="text-align: center;">You just logged, Please wait for {{timeLeft}} seconds to log again.</h1>
-				</div>
 			</div>
+		</div>
+		<div ng-if="isUserInterval">
+			<h1 style="text-align: center; background: gray; border-radius: 10px; height: 180px; max-height: 180px; float: right; position: absolute; z-index: 99; right: 415px; top: 290px; width: 485px; padding: 35px 13px; color: black; border: 2px black solid;">
+				<div class="row">
+					<div class="col-md-2 col-sm-2">
+						<span style="color: yellow; font-size: 45px;" class="fa fa-exclamation-triangle"> </span>
+					</div>
+					<div class="col-md-10 col-sm-10" style="text-align: left; font-size: 32px;">
+						You just logged, Please wait {{timeLeft}} seconds to log again.
+					</div>
+				</div>
+			</h1>
 		</div>
 		<br>
 		<div ng-show="isPublicTable" class="row">
@@ -78,7 +85,7 @@
 			<div class="col-lg-6">
 				<div class="panel panel-default" style="background: white; opacity: 0.8;">
 					<div class="panel-heading">
-						Afternoon Log
+						{{pmIdentifier}}
 					</div>
 					<div class="panel-body">
 						<div class="dataTable_wrapper">
@@ -142,7 +149,7 @@
 					<div class="panel-footer">
 						<div class="row">
 							<div class="col-md-6">
-								<h4 class="text-center"><b>Log-in:</b> {{detectedEmployee.arrivalAM || detectedEmployee.loginDate}}</h4>
+								<h4 class="text-center"><b>Log-in:</b> {{detectedEmployee.arrivalAM || detectedEmployee.loginDate || ''}}</h4>
 							</div>
 
 							<div class="col-md-6">
@@ -156,7 +163,7 @@
 							</div>
 
 							<div class="col-md-6">
-								<h4 class="text-center"><b>Log-out:</b> {{detectedEmployee.departurePM || detectedEmployee.logoutDate}}</h4>
+								<h4 class="text-center"><b>Log-out:</b> {{detectedEmployee.departurePM || detectedEmployee.logoutDate || ''}}</h4>
 							</div>
 						</div>
 

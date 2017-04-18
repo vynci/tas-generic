@@ -1,6 +1,6 @@
 /* Space out content a bit */
 body {
-    padding-bottom: 20px;
+    /*padding-bottom: 20px;*/
 }
 
 /*.small{
@@ -79,8 +79,8 @@ tr.noBorder td {
 @media (min-width: 768px) {
   .container {
     max-width: 1366px;
-    width: 1365px !important;
-    height: 768px !important;
+    width: 100% !important;
+    /*height: 768px !important;*/
   }
 }
 .container-narrow > hr {

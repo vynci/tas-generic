@@ -7,7 +7,7 @@
  * Controller of the sbAdminApp
  */
 angular.module('sbAdminApp')
-  .controller('PublicCtrl', function($scope, socket, dailyLogService, settingsService, $state, editReportRequests) {
+  .controller('PublicCtrl', function($scope, socket, dailyLogService, settingsService, $state, editReportRequests, $window) {
 
     var monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -34,6 +34,7 @@ angular.module('sbAdminApp')
     $scope.isFingerPrintDetected = false;
     $scope.isPublicTable = true;
     $scope.isFlashDriveEmpty = true;
+    $scope.pmIdentifier = 'Afternoon Log';
 
     startTime();
 
@@ -47,7 +48,6 @@ angular.module('sbAdminApp')
       editReportRequests.getAll()
       .then(function(results) {
         // Handle the result
-        console.log(results);
         $scope.editReportRequests = results;
       }, function(err) {
         // Error occurred
@@ -86,9 +86,6 @@ angular.module('sbAdminApp')
       settingsService.getSetting()
       .then(function(results) {
         // Handle the result
-
-
-
         if(results[0].get('firstBoot')){
           $state.go('guide');
         }
@@ -100,9 +97,9 @@ angular.module('sbAdminApp')
           $scope.secondaryPhoto = $scope.settings.get('secondaryPhoto');
           $scope.cutoffTime = $scope.settings.get('cutoffTime');
           $scope.coverImage = {
-            "background-image": "url(" + $scope.settings.get('coverImage') + ")"
+            "background-image": "url(" + $scope.settings.get('coverImage') + ")",
+            "height" : $window.screen.height + 'px'
           };
-
           var colorThemes = $scope.settings.get('colorThemes');
 
           $scope.clockColor = {
@@ -111,10 +108,7 @@ angular.module('sbAdminApp')
           }
 
         }
-
         getAll();
-
-
       }, function(err) {
         // Error occurred
         console.log(err);
@@ -123,6 +117,10 @@ angular.module('sbAdminApp')
     };
 
     function getAll(){
+      console.log('get All!');
+      $scope.displayedCollectionAM = [];
+      $scope.displayedCollectionPM = [];
+
       dailyLogService.getDailyLogs(true)
       .then(function(results) {
         // Handle the result
@@ -152,6 +150,11 @@ angular.module('sbAdminApp')
 
           var timeInDecimals = h + m/100;
 
+          // if(value.get('isCrossDate')){
+          //   var x = formatCrossDateTime(value.get('time'));
+          //   value.set('time', x);
+          // }
+
           if(timeInDecimals >= $scope.cutoffTime){
             afternoon.push(value);
           }
@@ -170,6 +173,33 @@ angular.module('sbAdminApp')
       });
     };
 
+    function formatCrossDateTime(data){
+      // 4:41:13 PM- Log-In
+      var tmp = data;
+      tmp = tmp.split('-');
+
+      var logType = tmp[1] + '-' + (tmp[2] || '');
+
+      tmp = tmp[0];
+
+      var time = tmp;
+
+      if(stringContains(time, 'M')){
+        var hours = Number(time.match(/^(\d+)/)[1]);
+        var minutes = Number(time.match(/:(\d+)/)[1]);
+        var AMPM = time.match(/\s(.*)$/)[1];
+        if(AMPM == "PM" && hours<12) hours = hours+12;
+        if(AMPM == "AM" && hours==12) hours = hours-12;
+        var sHours = hours.toString();
+        var sMinutes = minutes.toString();
+        if(hours<10) sHours = "0" + sHours;
+        if(minutes<10) sMinutes = "0" + sMinutes;
+        tmp = sHours + '' + sMinutes;
+      }
+
+      return tmp + ' -' + (logType || '');
+    }
+
     function startTime() {
       var today = new Date();
       var day = today.getDay();
@@ -185,13 +215,17 @@ angular.module('sbAdminApp')
         period = 'AM';
       }
 
+      if(h >= 18){
+        $scope.pmIdentifier = 'Evening Log';
+      }else{
+        $scope.pmIdentifier = 'Afternoon Log';
+      }
+
       var m = today.getMinutes();
       var s = today.getSeconds();
       h = checkAMPM(h);
       m = checkTime(m);
       s = checkTime(s);
-
-
 
       $scope.time = h + ":" + m + ":" + s + ' ' + period;
       $scope.currentDate = dayNames[day] + ', ' + monthNames[month] + ' ' + dateDay + ', ' + year;
@@ -220,6 +254,18 @@ angular.module('sbAdminApp')
 
     function stringContains(data, compare){
       return data.indexOf(compare) > -1;
+    }
+
+    function parseCrossDateTime(data){
+      var tmp = data;
+      tmp = tmp.split(' ');
+      tmp = tmp[0];
+      tmp = tmp.split('h');
+      tmp = tmp[0];
+      tmp = tmp.split(':');
+      tmp = tmp[0] + tmp[1];
+
+      return tmp;
     }
 
     socket.on('notificationsFromServer', function(data){
@@ -263,8 +309,8 @@ angular.module('sbAdminApp')
             'position' : data.position,
             'avatar' : data.avatarUrl,
             'time' : $scope.time,
-            'loginDate' : data.currentPeriodLog.loginDate,
-            'logoutDate' : data.currentPeriodLog.logoutDate,
+            'loginDate' : parseCrossDateTime(data.currentPeriodLog.loginDate),
+            'logoutDate' : parseCrossDateTime(data.currentPeriodLog.logoutDate),
           }
         }
 
