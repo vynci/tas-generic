@@ -477,7 +477,7 @@
       <div class="">Application Version <b>{{applicationVersion}}</b></div>
     </div>
     <div class="col-xs-6 col-lg-6 col-md-6">
-      <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#updateSoftwareModal">Update Software</button>
+      <button type="button" class="btn btn-warning btn-block" data-toggle="modal" ng-click="updateSoftware()" data-target="#updateSoftwareModal">Update Software</button>
     </div>
   </div>
   <div class="col-xs-6 col-lg-6 col-md-6">
@@ -518,10 +518,15 @@
         <h4 class="modal-title">Update Software</h4>
       </div>
       <div class="modal-body">
-        <p>Sorry, Cannot connect to the server. Please Try again.</p>
+        <p ng-if="!isUpgradeSoftwareDone || !isUpgradeSoftwareError">Upgrading Software...Please Wait (Do not close this window)</p>
+        <p ng-if="isUpgradeSoftwareDone">Success: Upgrade Done!</p>
+        <p ng-if="isUpgradeSoftwareDone">Please reboot the system to apply the changes..</p>
+        <p ng-if="isUpgradeSoftwareError">Failed: Software update files not found! Please check Flash-Drive, Reboot then try again...</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button ng-if="isUpgradeSoftwareDone" type="button" class="btn btn-danger" ng-click="rebootDevice()" data-dismiss="modal">Reboot Now</button>
+        <button ng-if="isUpgradeSoftwareDone" type="button" class="btn btn-default" data-dismiss="modal">Reboot Later</button>
+        <button ng-if="isUpgradeSoftwareError" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

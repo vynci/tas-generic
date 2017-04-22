@@ -29,6 +29,8 @@ angular.module('sbAdminApp')
       checkedOut : []
     }
 
+    $scope.editReportRequests = [];
+
     $scope.isTimeColumnHide = false;
 
     function stringContains(data, compare){
@@ -77,7 +79,11 @@ angular.module('sbAdminApp')
       editReportRequests.getAll()
       .then(function(results) {
         // Handle the result
-        $scope.editReportRequests = results;
+        angular.forEach(results, function(value, key) {
+          if(!value.get('isArchive')){
+            $scope.editReportRequests.push(value);
+          }
+        });
       }, function(err) {
         // Error occurred
         console.log(err);

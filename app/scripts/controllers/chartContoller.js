@@ -240,6 +240,7 @@ angular.module('sbAdminApp')
         currentEmployee.save(null, {
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
+            $scope.uploadFile = null;
             getAll();
 
             var Settings = Parse.Object.extend("Settings");
@@ -253,9 +254,9 @@ angular.module('sbAdminApp')
               success: function(result) {
                 // Execute any logic that should take place after the object is saved.
                 $scope.userTableResult = [];
-                console.log(result);
+
                 getSettings();
-                $window.location.reload();
+
               },
               error: function(gameScore, error) {
                 // Execute any logic that should take place if the save fails.
@@ -503,7 +504,6 @@ angular.module('sbAdminApp')
         },
         transformRequest: angular.identity
       }).then(function(data) {
-        console.log(data.data.url);
         var Employee = Parse.Object.extend("Employee");
         var employee = new Employee();
         var fingerPrintId = fingerPrintIdPool[0];
@@ -530,7 +530,8 @@ angular.module('sbAdminApp')
         employee.save(null, {
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
-            getAll();
+            $scope.uploadFile = null;
+            getAll();          
 
             var Settings = Parse.Object.extend("Settings");
             var settings = new Settings();
@@ -543,9 +544,7 @@ angular.module('sbAdminApp')
               success: function(result) {
                 // Execute any logic that should take place after the object is saved.
                 $scope.userTableResult = [];
-                console.log(result);
                 getSettings();
-                $window.location.reload();
               },
               error: function(gameScore, error) {
                 // Execute any logic that should take place if the save fails.
@@ -608,7 +607,6 @@ angular.module('sbAdminApp')
               $scope.userTableResult = [];
               console.log(result);
               getSettings();
-              $window.location.reload();
             },
             error: function(gameScore, error) {
               // Execute any logic that should take place if the save fails.
@@ -745,10 +743,12 @@ angular.module('sbAdminApp')
         $scope.user.rfId = $scope.detectedRFID;
         $scope.rfidButtonScanStatus = 'btn-success';
         $scope.rfidScanStatus = 'RFID Pairing Successful'
+        $scope.isRFIDDouble = false;
       }else{
         $scope.rfidDetectStatus = 'RFID already used, Please try other RFID.'
         $scope.isRFIDDetected = false;
         $scope.detectedRFID = null;
+        $scope.isRFIDDouble = true;
       }
     }, function(err) {
       // Error occurred

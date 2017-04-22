@@ -47,13 +47,21 @@ angular.module('sbAdminApp')
 		editReportRequests.getAll()
 		.then(function(results) {
 			// Handle the result
-			console.log(results);
 			$scope.rowCollection = results;
-			if(!results.length){
+
+			var numberOfActiveRequests = 0;
+
+			angular.forEach(results, function(value, key) {
+				if(!value.get('isArchive')){
+					numberOfActiveRequests = numberOfActiveRequests + 1;
+				}
+			});
+
+			if(numberOfActiveRequests === 0){
+				console.log('hey!');
 				socket.emit('notifications', 'request-empty');
 			}
 
-			return results;
 		}, function(err) {
 			// Error occurred
 			console.log(err);
@@ -183,7 +191,10 @@ angular.module('sbAdminApp')
 			if($scope.currentRequest.get('requestType') === 'Delete'){
 				periodLog.destroy({
 					success : function(){
-						$scope.currentRequest.destroy({
+						$scope.currentRequest.set('isArchive', true);
+						$scope.currentRequest.set('status', 'Accepted');
+
+						$scope.currentRequest.save(null, {
 							success : function(){
 								getAll();
 							},
@@ -198,7 +209,10 @@ angular.module('sbAdminApp')
 				periodLog.save(null, {
 					success: function(result) {
 						// Execute any logic that should take place after the object is saved.
-						$scope.currentRequest.destroy({
+						$scope.currentRequest.set('isArchive', true);
+						$scope.currentRequest.set('status', 'Accepted');
+
+						$scope.currentRequest.save(null, {
 							success : function(){
 								getAll();
 							},
@@ -213,7 +227,10 @@ angular.module('sbAdminApp')
 				});
 			}
 		}else{
-			$scope.currentRequest.destroy({
+			$scope.currentRequest.set('isArchive', true);
+			$scope.currentRequest.set('status', 'Rejected');
+
+			$scope.currentRequest.save(null, {
 				success : function(){
 					getAll();
 				},

@@ -737,34 +737,34 @@ angular.module('sbAdminApp')
     }
 
     $scope.splitTime = function(time){
-      console.log(time);
       var result = '-';
 
-      if(time === '-' || time === 'holiday'){
+      if(time){
+        if(time === '-' || time === 'holiday'){
           if(time === 'holiday'){
             result = 'holiday';
           }
-      }else{
-        result = time.split(' ');
-        result = result[0];
+        }else{
+          result = time.split(' ');
+          result = result[0];
+        }
       }
-
-
       return result;
     }
 
     $scope.splitDate = function(date){
       var result = '-';
 
-      if(date === '-' || date === 'holiday'){
-        if(date === 'holiday'){
-          result = 'holiday';
+      if(date){
+        if(date === '-' || date === 'holiday'){
+          if(date === 'holiday'){
+            result = 'holiday';
+          }
+        }else{
+          result = date.split(' ');
+          result = result[1];
         }
-      }else{
-        result = date.split(' ');
-        result = result[1];
       }
-
 
       return result;
     }

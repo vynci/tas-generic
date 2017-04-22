@@ -435,9 +435,28 @@ angular.module('sbAdminApp')
       }
     }
 
+    $scope.updateSoftware = function(){
+      $scope.isUpgradeSoftwareError = false;
+      settingsService.updateSoftware()
+      .then(function(results) {
+        // Handle the result
+        console.log(results);
+        if(results.status === 301){
+          $scope.isUpgradeSoftwareError = true;
+        } else{
+          $scope.isUpgradeSoftwareDone = true;
+        }      
+
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      });
+    }
+
     $scope.rebootDevice = function(){
       $timeout(function() {
         $state.go('login');
+        $window.stop();
       }, 3000);
       settingsService.reboot()
       .then(function(results) {
@@ -445,15 +464,13 @@ angular.module('sbAdminApp')
       }, function(err) {
         // Error occurred
         console.log(err);
-        $window.location.reload();
-      }, function(percentComplete) {
-        console.log(percentComplete);
       });
     }
 
     $scope.powerOffDevice = function(){
       $timeout(function() {
         $state.go('login');
+        $window.stop();
       }, 3000);
       settingsService.powerOff()
       .then(function(results) {
@@ -461,9 +478,6 @@ angular.module('sbAdminApp')
       }, function(err) {
         // Error occurred
         console.log(err);
-        $window.location.reload();
-      }, function(percentComplete) {
-        console.log(percentComplete);
       });
     }
 

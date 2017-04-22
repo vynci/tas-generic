@@ -37,6 +37,20 @@ app.service('settingsService', function($q, $http) {
 		return def.promise;
 	}
 
+	var updateSoftware = function(userId) {
+		console.log('update Software');
+		var def = $q.defer();
+
+		$http.get("http://172.24.1.1:1337/software-upgrade")
+		.success(function(data) {
+			def.resolve(data);
+		})
+		.error(function() {
+			def.reject("Failed to Reboot");
+		});
+		return def.promise;
+	}
+
 	var reboot = function(userId) {
 		console.log('rebooting');
 		var def = $q.defer();
@@ -145,7 +159,8 @@ app.service('settingsService', function($q, $http) {
 		adminPasswordReset : adminPasswordReset,
 		powerOff : powerOff,
 		reformatFingerPrint : reformatFingerPrint,
-		getMedia : getMedia
+		getMedia : getMedia,
+		updateSoftware : updateSoftware
 	};
 
 });

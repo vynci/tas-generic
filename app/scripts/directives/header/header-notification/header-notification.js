@@ -33,15 +33,13 @@ angular.module('sbAdminApp')
 						}, function(err) {
 							// Error occurred
 							console.log(err);
-						}, function(percentComplete) {
-							console.log(percentComplete);
 						});
 					};
 
 					$scope.reboot = function(){
-						console.log('reboot!');
 						$timeout(function() {
 							$state.go('login');
+							$window.stop();
 						}, 3000);
 						settingsService.reboot()
 						.then(function(results) {
@@ -49,16 +47,13 @@ angular.module('sbAdminApp')
 						}, function(err) {
 							// Error occurred
 							console.log(err);
-							$window.location.reload();
-						}, function(percentComplete) {
-							console.log(percentComplete);
 						});
 					}
 
 					$scope.powerOff = function(){
-						console.log('powerOff!');
 						$timeout(function() {
 							$state.go('login');
+							$window.stop();
 						}, 3000);
 						settingsService.powerOff()
 						.then(function(results) {
@@ -66,9 +61,6 @@ angular.module('sbAdminApp')
 						}, function(err) {
 							// Error occurred
 							console.log(err);
-							$window.location.reload();
-						}, function(percentComplete) {
-							console.log(percentComplete);
 						});
 					}
 				}

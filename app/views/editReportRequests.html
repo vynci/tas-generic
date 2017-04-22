@@ -65,12 +65,13 @@
 					<td>{{row.attributes.totalTime || 'n/a'}}</td>
 					<td>{{row.attributes.extraLogPool.length || 'n/a'}}</td>
 					<td>
-						<button class="btn btn-sm btn-success" ng-click="confirmAction('accept', row)" data-toggle="modal" data-target="#confirmationModal">
+						<button class="btn btn-sm btn-success" ng-click="confirmAction('accept', row)" data-toggle="modal" data-target="#confirmationModal" ng-if="!row.attributes.isArchive">
 							Accept
 						</button>
-						<button class="btn btn-sm btn-danger" ng-click="confirmAction('reject', row)" data-toggle="modal" data-target="#confirmationModal">
+						<button class="btn btn-sm btn-danger" ng-click="confirmAction('reject', row)" data-toggle="modal" data-target="#confirmationModal" ng-if="!row.attributes.isArchive">
 							Reject
 						</button>
+						<span ng-if="row.attributes.isArchive">{{row.attributes.status}}</span>
 					</td>
 				</tr>
 				<tr ng-hide="rowCollection.length > 0">

@@ -29,6 +29,8 @@ angular.module('sbAdminApp')
       'avatar' : '"img/logo/logo_placeholder.png";'
     }
 
+    $scope.editReportRequests = [];
+    var isCutOffTime = false;
     var userLoginterval = 60;
 
     $scope.isFingerPrintDetected = false;
@@ -48,7 +50,11 @@ angular.module('sbAdminApp')
       editReportRequests.getAll()
       .then(function(results) {
         // Handle the result
-        $scope.editReportRequests = results;
+        angular.forEach(results, function(value, key) {
+          if(!value.get('isArchive')){
+            $scope.editReportRequests.push(value);
+          }
+        });
       }, function(err) {
         // Error occurred
         console.log(err);
@@ -95,6 +101,7 @@ angular.module('sbAdminApp')
           userLoginterval = $scope.settings.get('userLogInterval') || 60;
           $scope.primaryPhoto = $scope.settings.get('primaryPhoto');
           $scope.secondaryPhoto = $scope.settings.get('secondaryPhoto');
+          isCutOffTime = $scope.settings.get('isCutOffTime');
           $scope.cutoffTime = $scope.settings.get('cutoffTime');
           $scope.coverImage = {
             "background-image": "url(" + $scope.settings.get('coverImage') + ")",
@@ -123,10 +130,6 @@ angular.module('sbAdminApp')
 
       dailyLogService.getDailyLogs(true)
       .then(function(results) {
-        // Handle the result
-        var morning = [];
-        var afternoon = [];
-
         angular.forEach(results, function(value, key) {
           var tmp = value.get('time');
           tmp = tmp.split(' ');
@@ -150,21 +153,37 @@ angular.module('sbAdminApp')
 
           var timeInDecimals = h + m/100;
 
-          // if(value.get('isCrossDate')){
-          //   var x = formatCrossDateTime(value.get('time'));
-          //   value.set('time', x);
-          // }
+          if(value.get('isCrossDate')){
+            var x = formatCrossDateTime(value.get('time'));
+            value.set('time', x);
 
-          if(timeInDecimals >= $scope.cutoffTime){
-            afternoon.push(value);
+            var timeInDecCrossDate = x.split(' ');
+            timeInDecCrossDate = timeInDecCrossDate[0];
+            timeInDecCrossDate = parseInt(timeInDecCrossDate);
+
+            if(timeInDecCrossDate >= 1200){
+              $scope.displayedCollectionPM.push(value);
+            }
+            else{
+              $scope.displayedCollectionAM.push(value);
+            }
+
+          }else{
+            var cutOffTimeToBeUsed = 12;
+
+            if(isCutOffTime){
+              cutOffTimeToBeUsed = $scope.cutoffTime
+            }
+
+            if(timeInDecimals >= cutOffTimeToBeUsed){
+              $scope.displayedCollectionPM.push(value);
+            }
+            else{
+              $scope.displayedCollectionAM.push(value);
+            }
           }
-          else{
-            morning.push(value);
-          }
+
         });
-
-        $scope.displayedCollectionAM = morning;
-        $scope.displayedCollectionPM = afternoon;
 
       }, function(err) {
         // Error occurred
@@ -262,15 +281,15 @@ angular.module('sbAdminApp')
       tmp = tmp[0];
       tmp = tmp.split('h');
       tmp = tmp[0];
-      tmp = tmp.split(':');
-      tmp = tmp[0] + tmp[1];
 
       return tmp;
     }
 
     socket.on('notificationsFromServer', function(data){
-      getEditReportRequests();
+      console.log(data);
+      // getEditReportRequests();
       if(stringContains(data, 'request-empty')){
+        console.log('im empty here');
         $scope.showNotifcations = false;
       }else if(stringContains(data, 'log-interval')){
         $scope.isUserInterval = true;
