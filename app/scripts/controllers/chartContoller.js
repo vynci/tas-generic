@@ -35,7 +35,7 @@ angular.module('sbAdminApp')
 
   var currentEmployee = '';
   function getAll(sort){
-    employeeService.getEmployees(sort)
+    employeeService.getEmployees(sort, 500)
     .then(function(results) {
       // Handle the result
       console.log(results);
@@ -240,6 +240,7 @@ angular.module('sbAdminApp')
         currentEmployee.save(null, {
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
+            $scope.user.rfId = null;
             $scope.uploadFile = null;
             getAll();
 
@@ -531,7 +532,8 @@ angular.module('sbAdminApp')
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
             $scope.uploadFile = null;
-            getAll();          
+            $scope.user.rfId = null;
+            getAll();
 
             var Settings = Parse.Object.extend("Settings");
             var settings = new Settings();
@@ -592,6 +594,7 @@ angular.module('sbAdminApp')
       employee.save(null, {
         success: function(result) {
           // Execute any logic that should take place after the object is saved.
+          $scope.user.rfId = null;
           getAll();
 
           var Settings = Parse.Object.extend("Settings");

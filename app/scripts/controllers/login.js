@@ -44,11 +44,6 @@ angular.module('sbAdminApp')
     }
 
     $scope.submitProductId = function(){
-      console.log($scope.productId);
-      console.log(Parse);
-
-
-
       if($scope.productId !== $scope.settingsProductId){
         $scope.passwordResetStatus = 'Product Id mismatch';
       }

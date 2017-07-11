@@ -11,6 +11,14 @@ app.service('periodLogService', function($q) {
 		}
 
 		if(min && max){
+			var d1 = new Date (min);
+			var min = new Date ( d1 );
+			min.setHours ( d1.getHours() + 8 );
+
+			var d3 = new Date (max);
+			var max = new Date ( d3 );
+			max.setHours ( d1.getHours() + 8 );
+
 			query.greaterThanOrEqualTo('periodDate', min);
 			query.lessThan('periodDate', max);
 			query.ascending('periodDate');

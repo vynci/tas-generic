@@ -258,7 +258,7 @@ angular.module('sbAdminApp')
     }
 
     function getAllEmployees(sort){
-      employeeService.getEmployees(sort)
+      employeeService.getEmployees(sort, 500)
       .then(function(results) {
         // Handle the result
         $scope.sortLists.push({
