@@ -212,7 +212,8 @@ var app = angular
                 name:'sbAdminApp',
                 files:[
                 'scripts/controllers/chartContoller.js',
-                'scripts/services/settingsService.js'
+                'scripts/services/settingsService.js',
+                'scripts/services/periodLogService.js'
                 ]
             })
           }

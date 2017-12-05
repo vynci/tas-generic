@@ -167,10 +167,10 @@
               <tbody>
                 <tr ng-repeat="row in batchReport.dataLogs | limitTo:31 track by $index ">
                   <td class="text-center"><b>{{$index + 1}}</b></td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitDate(row.attributes.loginDate)}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitTime(row.attributes.loginDate)}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitDate(row.attributes.logoutDate)}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{splitTime(row.attributes.logoutDate)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitDate(row.attributes.loginDate))}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.loginDate != null, logBlockBad: row.attributes.loginDate == null || row.attributes.loginDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitTime(row.attributes.loginDate))}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitDate(row.attributes.logoutDate))}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.logoutDate != null, logBlockBad: row.attributes.logoutDate == null || row.attributes.logoutDate == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitTime(row.attributes.logoutDate))}}</td>
                   <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
                   <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
                 </tr>
@@ -206,10 +206,10 @@
               <tbody>
                 <tr ng-repeat="row in batchReport.dataLogs | limitTo:31 track by $index ">
                   <td class="text-center"><b>{{$index + 1}}</b></td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.arrivalAM != null, logBlockBad: row.attributes.arrivalAM == null || row.attributes.arrivalAM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{row.attributes.arrivalAM}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.departureAM != null, logBlockBad: row.attributes.departureAM == null || row.attributes.departureAM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{row.attributes.departureAM}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.arrivalPM != null, logBlockBad: row.attributes.arrivalPM == null || row.attributes.arrivalPM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{row.attributes.arrivalPM}}</td>
-                  <td class="text-center" ng-class="{logBlockGood: row.attributes.departurePM != null, logBlockBad: row.attributes.departurePM == null || row.attributes.departurePM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{row.attributes.departurePM}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.arrivalAM != null, logBlockBad: row.attributes.arrivalAM == null || row.attributes.arrivalAM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.arrivalAM)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.departureAM != null, logBlockBad: row.attributes.departureAM == null || row.attributes.departureAM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.departureAM)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.arrivalPM != null, logBlockBad: row.attributes.arrivalPM == null || row.attributes.arrivalPM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.arrivalPM)}}</td>
+                  <td class="text-center" ng-class="{logBlockGood: row.attributes.departurePM != null, logBlockBad: row.attributes.departurePM == null || row.attributes.departurePM == ''}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.departurePM)}}</td>
                   <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
                   <td class="text-center" ng-class="{undertimeTrue: row.attributes.totalTime < 480 && calcUnderTimeHours(row.attributes.totalTime) != '-', undertimeFalse: row.attributes.totalTime === 480}" ng-click="changeReportRow(row)" style="cursor:pointer;" data-toggle="modal" data-target="#myModal">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
                 </tr>
@@ -232,8 +232,8 @@
 
           <div ng-repeat="batchReport in batchReportList track by $index">
             <!-- <br> -->
-              <div ng-if="isDTRHeaderCustomizable">
-                <div>
+              <div>
+                <div ng-if="isDTRHeaderCustomizable">
                   <div class="row" style="margin-right:0px;">
                     <div class="col-xs-4"><img ng-src="{{appLogo}}" style="width: 100%;" alt=""></div>
                     <div class="col-xs-8" style="padding-right:0px; padding-left:0px;">
@@ -243,9 +243,7 @@
                     </div>
                   </div>
                 </div>
-                <br>
-
-                <div>
+                <!--<div>
                   <div class="text-center"><b style="font-family: 'Times New Roman', Times, serif;">DAILY TIME RECORD</b></div>
                   <div class="text-center" style="padding-bottom: 10px;"><em style="font-size:10px;">Employee No: {{batchReport.employeeId}}</em></div>
                   <div class="text-center" style="border-bottom: 1px solid; height: 20px;"><p>{{batchReport.name}}</p></div>
@@ -254,10 +252,39 @@
                     <div class="col-xs-4" style="padding-right:5px;"><p style="font-size:75%;"><em>For the month of</em></p></div>
                     <div class="col-xs-8" style="border-bottom: 1px solid; height: 20px;"><p class="small"> {{selectedDate.month || fromSelectedDate.month}} {{selectedDate.year || fromSelectedDate.year}}</p></div>
                   </div>
+                  <div class="row">
+                    <div class="col-xs-12" style="text-align: right;">
+                      {{batchReport.regularTime.timeIn.hours}} : {{parseMinutes(batchReport.regularTime.timeIn.minutes)}} - {{batchReport.regularTime.timeOut.hours}} : {{parseMinutes(batchReport.regularTime.timeOut.minutes)}}
+                    </div>
+                  </div>
+                </div>-->
+                <div class="text-left"><p style="font-size:65%;"><em>Civil Service Form No. 48 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Employee No: {{batchReport.employeeId}}</em></p></div>
+                <div class="text-center"><b>DAILY TIME RECORD</b></div>
+                <div class="text-center">-----o0o-----</div>
+                <div class="text-center" style="border-bottom: 1px solid; height: 20px;"><p>{{batchReport.name}}</p></div>
+                <div class="text-center"><p style="font-size:90%;">(Name)</p></div>
+                <div class="row" ng-disabled="!tmpId" style="margin-right:0px;">
+                  <div class="col-xs-4" style="padding-right:5px;"><p style="font-size:75%;"><em>For the month of</em></p></div>
+                  <div class="col-xs-8" style="border-bottom: 1px solid; height: 20px;"><p class="small"> {{selectedDate.month}} {{selectedDate.year}}</p></div>
+                </div>
+                <div class="row" style="margin-right:0px;">
+                  <div class="col-xs-6" style="padding-right:0px;"><p style="font-size:75%;"><em>Official hours for arrival</em></p></div>
+                  <div class="col-xs-3" style="padding-right:5px; padding-left:0px; text-align: right;"><p style="font-size:75%;"><em>Regular Days</em></p></div>
+                  <div class="col-xs-3" style="border-bottom: 1px solid; height: 20px;"><p class="small"></p></div>
+                </div>
+                <div class="row" style="margin-right:0px;">
+                  <div class="col-xs-6 text-center" style="padding-right:0px;"><p style="font-size:75%;"><em>and departure</em></p></div>
+                  <div class="col-xs-3" tyle="padding-right:5px; padding-left:0px; text-align: right;"><p style="font-size:75%;"><em>Saturdays</em></p></div>
+                  <div class="col-xs-3" style="border-bottom: 1px solid; height: 20px;"><p class="small"></p></div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12" style="text-align: right;">
+                    {{batchReport.regularTime.timeIn.hours}} : {{parseMinutes(batchReport.regularTime.timeIn.minutes)}} - {{batchReport.regularTime.timeOut.hours}} : {{parseMinutes(batchReport.regularTime.timeOut.minutes)}}
+                  </div>
                 </div>
               </div>
 
-              <div ng-if="!isDTRHeaderCustomizable">
+              <!--<div ng-if="!isDTRHeaderCustomizable">
                 <div class="text-left"><p style="font-size:75%;"><em>Civil Service Form No. 48 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Employee No: {{batchReport.employeeId}}</em></p></div>
                 <div class="text-center"><b>DAILY TIME RECORD</b></div>
                 <div class="text-center">-----o0o-----</div>
@@ -277,24 +304,24 @@
                   <div class="col-xs-3" tyle="padding-right:5px; padding-left:0px; text-align: right;"><p style="font-size:75%;"><em>Saturdays</em></p></div>
                   <div class="col-xs-3" style="border-bottom: 1px solid; height: 20px;"><p class="small"></p></div>
                 </div>
-              </div>
+              </div>-->
 
 
               <div ng-if="!batchReport.isCrossDate">
-                <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered" style="border: 1px solid black !important;">
+                <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered" style="border: 1px solid black !important;  margin-bottom:5px;">
                   <thead>
 
                     <tr class="small">
                       <th class="text-center" rowspan="2" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Day</th>
                       <th class="text-center" colspan="2" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;"><span ng-if="!isTwoLogsEnable">AM</span></th>
                       <th class="text-center" colspan="2" style="font-size:72% !important; border: 1px solid black !important; padding:2px;"><span ng-if="!isTwoLogsEnable">PM</span></th>
-                      <th class="text-center" colspan="2" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Daily Total</th>
+                      <th class="text-center" colspan="2" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Undertime</th>
                     </tr>
                     <tr class="small" >
-                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Login</th>
-                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Logout</th>
-                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Lunch-<br>in</th>
-                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Logout</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Arrival</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Departure</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Arrival</th>
+                      <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Departure</th>
                       <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Hours</th>
                       <th class="text-center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;">Min-<br>utes</th>
                     </tr>
@@ -303,10 +330,10 @@
                   <tbody>
                     <tr ng-repeat="row in batchReport.dataLogs track by $index" class="small" style="font-size:72% !important;">
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;"><b>{{$index + 1}}</b></td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.arrivalAM}}</td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.departureAM}}</td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.arrivalPM}}</td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{row.attributes.departurePM}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, row.attributes.arrivalAM)">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.arrivalAM)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, row.attributes.departureAM)">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.departureAM)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, row.attributes.arrivalPM)">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.arrivalPM)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, row.attributes.departurePM)">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, row.attributes.departurePM)}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
                     </tr>
@@ -323,7 +350,7 @@
               </div>
 
               <div ng-if="batchReport.isCrossDate">
-                <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered" style="border: 1px solid black !important;">
+                <table st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered" style="border: 1px solid black !important; margin-bottom:5px;">
                   <thead>
                     <tr class="small">
                       <th class="text-center" data-halign="center" style="font-size:72% !important; border: 1px solid black !important; padding:2px;" rowspan="2">Day</th>
@@ -344,10 +371,10 @@
                   <tbody>
                     <tr ng-repeat="row in batchReport.dataLogs track by $index" class="small" style="font-size:72% !important;">
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;"><b>{{$index + 1}}</b></td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitDate(row.attributes.loginDate)}}</td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitTime(row.attributes.loginDate)}}</td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitDate(row.attributes.logoutDate)}}</td>
-                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{splitTime(row.attributes.logoutDate)}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, splitDate(row.attributes.loginDate))">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitDate(row.attributes.loginDate))}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, splitTime(row.attributes.loginDate))">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitTime(row.attributes.loginDate))}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, splitDate(row.attributes.logoutDate))">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitDate(row.attributes.logoutDate))}}</td>
+                      <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;" ng-class="checkWeekendStyle($index + 1, selectedDate.month, selectedDate.year, splitTime(row.attributes.logoutDate))">{{checkWeekend($index + 1, selectedDate.month, selectedDate.year, splitTime(row.attributes.logoutDate))}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalHours(row.attributes.totalTime)}}</td>
                       <td class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">{{calcRowTotalMins(row.attributes.totalTime)}}</td>
                     </tr>
@@ -362,11 +389,11 @@
                 </tbody>
               </table>
             </div>
-            <div class="text-justify"><p style="font-size:75%"><em>I certify on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.</em></p></div>
+            <div class="text-justify"><p style="font-size:75%;"><em>I certify on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.</em></p></div>
 
             <div class="text-center" style="border-bottom: 2px solid;"><p> {{batchReport.name}}</p></div>
             <div class="text-justify"><p style="font-size:75%;"><em>VERIFIED as to the prescribed office hours:</em></p></div>
-            <div class="text-center" style="border-bottom: 2px solid;"><p>{{inCharge}} </p></div>
+            <div class="text-center" style="border-bottom: 2px solid;"><p style="height: 10px;">{{checkInCharge(inCharge, batchReport.name) || ' '}} </p></div>
             <div class="text-center"><p style="font-size:75%;"><em>In Charge</em></p></div>
 <!--
             <div class="text-center"><p style="font-size:75%;">(SEE INSTRUCTION ON BACK)</p></div> -->

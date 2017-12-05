@@ -7,7 +7,7 @@
 * Controller of the sbAdminApp
 */
 angular.module('sbAdminApp')
-.controller('ChartCtrl', ['$scope', '$timeout', '$http', 'employeeService', 'socket', '$modalStack', 'settingsService', '$state', function ($scope, $timeout, $http, employeeService, socket, $modalStack, settingsService, $state, $window) {
+.controller('ChartCtrl', ['$scope', '$timeout', '$http', 'employeeService', 'socket', '$modalStack', 'settingsService', '$state', 'periodLogService', function ($scope, $timeout, $http, employeeService, socket, $modalStack, settingsService, $state, periodLogService, $window) {
   var currentUser = Parse.User.current();
   if(!currentUser){
     $state.go('login');
@@ -16,7 +16,12 @@ angular.module('sbAdminApp')
   var settingId = currentUser.get('settingId');
   var fingerPrintIdPool = [];
   var idToBeDeleted = '';
+  var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+  ];
+  var dateNow = new Date();  
 
+  $scope.mothSelectNames = monthNames;
   $scope.totalUsers = null;
   // $scope.uploadFile = {};
   $scope.isScanFinger = true;
@@ -31,14 +36,22 @@ angular.module('sbAdminApp')
     }
     getAll(item.name);
   }
+  
+  $scope.selectedDateFrom = {
+    year : dateNow.getFullYear(),
+    month : monthNames[dateNow.getMonth()]
+  };  
 
+  $scope.selectedDateTo = {
+    year : dateNow.getFullYear(),
+    month : monthNames[dateNow.getMonth()]
+  };    
 
   var currentEmployee = '';
   function getAll(sort){
     employeeService.getEmployees(sort, 500)
     .then(function(results) {
       // Handle the result
-      console.log(results);
       $scope.rowCollection = results;
       $scope.totalUsers = results.length;
 
@@ -67,6 +80,7 @@ angular.module('sbAdminApp')
       $scope.userInfo = {}
       fingerPrintIdPool = $scope.settings.get('fingerPrintIdPool');
       $scope.enableRFID = $scope.settings.get('enableRFID');
+      $scope.secondaryPassword = $scope.settings.get('secondaryPassword');
 
       if($scope.enableRFID ){
         $scope.isScanFinger = false;
@@ -86,6 +100,16 @@ angular.module('sbAdminApp')
     'lastName' : '',
     'gender' : 'Male',
     'isCrossDate' : 'false',
+    'regularTime' : {
+      timeIn : {
+        hours: 8,
+        minutes:0
+      },
+      timeOut : {
+        hours: 17,
+        minutes:0
+      }      
+    },
     'age' : ''
   }
 
@@ -135,6 +159,12 @@ angular.module('sbAdminApp')
     $scope.modal.title = 'Add User';
     $scope.modal.mode = 'Create';
     $scope.modal.isUpdate = false;
+    
+    $scope.isConfirmDeleteLogsByUser = false;
+    $scope.isDeleteLogsByUser = false;
+    $scope.isSecondaryPasswordInvalid = false;
+    $scope.isSecondaryPasswordValid = false;
+    $scope.confirmSecondaryPassword = '';    
 
     $scope.user.employeeId = '';
     $scope.user.firstName = '';
@@ -151,13 +181,28 @@ angular.module('sbAdminApp')
     $scope.detectedRFID = null;
     $scope.rfidDetectStatus = null;
     $scope.deleteConfirmation = false;
+    $scope.user.regularTime = {
+      timeIn : {
+        hours: 8,
+        minutes:0
+      },
+      timeOut : {
+        hours: 17,
+        minutes:0
+      }      
+    };
+
   };
 
   $scope.editModal = function (id) {
-    console.log(id);
     $scope.modal.title = 'Edit User';
     $scope.modal.mode = 'Update';
     $scope.modal.isUpdate = true;
+    $scope.isConfirmDeleteLogsByUser = false;
+    $scope.isDeleteLogsByUser = false;
+    $scope.isSecondaryPasswordInvalid = false;
+    $scope.isSecondaryPasswordValid = false;
+    $scope.confirmSecondaryPassword = '';
 
     currentEmployee = '';
     $scope.previewImage = '';
@@ -173,7 +218,6 @@ angular.module('sbAdminApp')
     employeeService.getEmployee(id)
     .then(function(result) {
       // Handle the result
-      console.log(result);
       $scope.user.employeeId = result[0].get('employeeId');
       $scope.user.firstName = result[0].get('firstName');
       $scope.user.lastName = result[0].get('lastName');
@@ -191,8 +235,18 @@ angular.module('sbAdminApp')
       }else{
         $scope.user.isCrossDate = "false";
       }
-
+      
+      $scope.user.regularTime = result[0].get('regularTime');
       currentEmployee = result[0];
+
+      periodLogService.getNumberOfLogsByUser(id)
+      .then(function(results) {
+        $scope.totalLogsOfCurrentEmployee = results;
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      });
+
     }, function(err) {
       // Error occurred
       console.log(err);
@@ -217,6 +271,8 @@ angular.module('sbAdminApp')
     }else{
       currentEmployee.set("isCrossDate", false);
     }
+
+    currentEmployee.set("regularTime", $scope.user.regularTime);
 
     if($scope.isCurrentFingerDeleted){
       var fingerPrintId = fingerPrintIdPool[0];
@@ -271,7 +327,7 @@ angular.module('sbAdminApp')
           }
         });
       },function(err){
-        alert('Picture should not exceed 2mb, Please Try again.');
+        alert('Picture should not exceed 300kb, Please Try again.');
       });
 
     } else{
@@ -370,8 +426,6 @@ angular.module('sbAdminApp')
   }
 
   $scope.deleteUser = function(){
-
-    console.log(parseInt(currentEmployee.get('fingerPrintId')));
     idToBeDeleted = parseInt(currentEmployee.get('fingerPrintId'));
 
     currentEmployee.destroy({
@@ -390,6 +444,17 @@ angular.module('sbAdminApp')
         $scope.previewImage = '';
         $scope.scanStatus = 'Scan';
         $scope.buttonScanStatus = 'btn-info';
+
+        $scope.user.regularTime = {
+          timeIn : {
+            hours: 8,
+            minutes:0
+          },
+          timeOut : {
+            hours: 17,
+            minutes:0
+          }      
+        };
 
         $modalStack.dismissAll();
         getAll();
@@ -476,7 +541,7 @@ angular.module('sbAdminApp')
   }
 
   $scope.convertToMB = function(size){
-    var value = size/1000000;
+    var value = size/1000;
 
     if(value){
       return value.toFixed(2);
@@ -494,7 +559,6 @@ angular.module('sbAdminApp')
   }
 
   $scope.addUser = function(){
-    console.log($scope.uploadFile);
     if($scope.uploadFile){
       $http.post("http://172.24.1.1:1337/parse/files/image.jpg", $scope.uploadFile, {
         withCredentials: false,
@@ -528,6 +592,8 @@ angular.module('sbAdminApp')
           employee.set("isCrossDate", false);
         }
 
+        employee.set("regularTime", $scope.user.regularTime);
+
         employee.save(null, {
           success: function(result) {
             // Execute any logic that should take place after the object is saved.
@@ -560,7 +626,7 @@ angular.module('sbAdminApp')
           }
         });
       },function(err){
-        alert('Picture should not exceed 2mb, Please Try again.');
+        alert('Picture should not exceed 300kb, Please Try again.');
       });
 
     }
@@ -590,6 +656,8 @@ angular.module('sbAdminApp')
       }else{
         employee.set("isCrossDate", false);
       }
+
+      employee.set("regularTime", $scope.user.regularTime);
 
       employee.save(null, {
         success: function(result) {
@@ -762,6 +830,85 @@ angular.module('sbAdminApp')
   $scope.unpairRFID = function(){
     $scope.user.rfId = '';
     $scope.detectedRFID = '';
+  }
+
+  $scope.activateDeleteLogsByUser = function(){
+    $scope.isDeleteLogsByUser = true;
+  }
+
+  $scope.deleteLogsByUser = function(){
+    $scope.isConfirmDeleteLogsByUser = true;
+  }
+
+  $scope.confirmDeleteLogsByUser = function(){
+    if($scope.secondaryPassword === $scope.confirmSecondaryPassword){
+
+      settingsService.backup('export')
+      .then(function(results) {
+        var PeriodLogObject = Parse.Object.extend("PeriodLog");
+        var queryPeriod = new Parse.Query(PeriodLogObject);
+        var monthTo = monthNames.indexOf($scope.selectedDateTo.month);
+        monthTo = monthNames[monthTo + 1];
+
+        var yearTo = $scope.selectedDateTo.year;
+        
+        if(monthTo === undefined){
+          monthTo = 'January';
+          yearTo = yearTo + 1;
+        }
+
+        var min = new Date($scope.selectedDateFrom.month + ' ' + $scope.selectedDateFrom.year);
+        var max = new Date(monthTo + ' ' + yearTo);
+
+        queryPeriod.limit(100000);
+        queryPeriod.equalTo("employeeId", currentEmployee.id);
+        queryPeriod.greaterThanOrEqualTo('periodDate', min);
+        queryPeriod.lessThan('periodDate', max);
+
+        queryPeriod.find().then(function (log) {
+          var logCount = log.length;
+          var cnt = 0;
+
+          if(logCount === 0){
+            alert('Current Employee have no logs to delete. Please close this pop-up window');
+          }
+
+          log.forEach(function(log) {                  
+            log.destroy({
+              success: function() {
+                // SUCCESS CODE HERE, IF YOU WANT
+                cnt = cnt + 1;             
+                if(cnt === (logCount - 1)){
+                  alert('User Logs have been deleted. Please close this pop-up window');
+                }               
+              },
+              error: function() {
+                // ERROR CODE HERE, IF YOU WANT
+                console.log('period log error delete');
+              }
+            });         
+          });
+        }, function (error) {
+          response.error(error);
+        });
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+        alert('Something went wrong with the backup process');
+      }, function(percentComplete) {
+        console.log(percentComplete);
+      }); 
+    }else{
+      $scope.isSecondaryPasswordInvalid = true;
+    }
+   
+  }
+
+  $scope.cancelDeleteLogsByUser = function(){
+    $scope.isConfirmDeleteLogsByUser = false;
+    $scope.isDeleteLogsByUser = false;
+    $scope.isSecondaryPasswordInvalid = false;
+    $scope.isSecondaryPasswordValid = false;
   }
 
   function processRFID(data){

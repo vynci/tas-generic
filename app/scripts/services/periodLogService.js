@@ -80,10 +80,30 @@ app.service('periodLogService', function($q) {
 		return defer.promise;
 	};
 
+	var getNumberOfLogsByUser = function(id, min, max) {
+		var defer = $q.defer();
+		var PeriodLog = Parse.Object.extend("PeriodLog");
+		var query = new Parse.Query(PeriodLog);
+
+		query.equalTo("employeeId", id);
+
+		query.count({
+			success: function(results) {
+				defer.resolve(results);
+			},
+			error: function(error) {
+				defer.reject(error);
+				alert("Error: " + error.code + " " + error.message);
+			}
+		});
+		return defer.promise;
+	};	
+
 	return {
 		getNumberOfLogs : getNumberOfLogs,
 		getAll : getAll,
-		getPeriodLogsByUser : getPeriodLogsByUser
+		getPeriodLogsByUser : getPeriodLogsByUser,
+		getNumberOfLogsByUser : getNumberOfLogsByUser
 	};
 
 });

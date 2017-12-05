@@ -78,6 +78,76 @@ angular.module('sbAdminApp')
       'name' : ''
     };
 
+    $scope.parseMinutes = function(value){
+      var minutes = value.toString();
+
+      if(minutes.length > 1){
+        minutes = minutes
+      }else{
+        minutes = "0" + minutes;
+      }
+
+      return minutes;
+    };
+
+    $scope.checkInCharge = function(inChargeName, employeeName){
+      var inCharge = inChargeName;
+      
+
+      if(inCharge.toLowerCase() === employeeName.toLowerCase()){
+        inCharge = $scope.secondaryInCharge;
+      }
+
+      return inCharge;
+    }
+
+    $scope.checkWeekend = function(day, month, year, currentLog){
+      var result = currentLog;      
+      var dateNow = new Date(month + ' ' + day + ' ' + year);
+
+      if(currentLog === '-' || currentLog === undefined || currentLog === ''){
+        if(dateNow.getDay() === 6){
+          result = 'Saturday';
+        }else if(dateNow.getDay() === 0){
+          result = 'Sunday';
+        }
+
+        $scope.currentHolidays.forEach(function(data){
+          var startDate = data.get('startTime');
+          startDate = startDate.getDate();
+
+          if(day === startDate){
+            result =  'holiday';
+          }
+        });        
+      }
+
+      return result;
+    };
+
+    $scope.checkWeekendStyle = function(day, month, year, currentLog){
+      var result = '';      
+      var dateNow = new Date(month + ' ' + day + ' ' + year);
+
+      if(currentLog !== '-'){
+        if(dateNow.getDay() === 6 || dateNow.getDay() === 0){
+          result =  'weekend-indicator';
+        }
+      }
+
+      $scope.currentHolidays.forEach(function(data){
+        var startDate = data.get('startTime');
+        startDate = startDate.getDate();
+
+        if(day === startDate){
+          result =  'weekend-indicator';
+        }
+
+      });
+
+      return result;
+    };
+
     $scope.calcUnderTimeHours = function(hour){
 
       var tmp = hour / 60;
@@ -252,6 +322,7 @@ angular.module('sbAdminApp')
         $scope.tmpId = item.id;
         $scope.employeeInfo.name = item.name;
         $scope.employeeInfo.employeeId = item.employeeId;
+        $scope.employeeInfo.regularTime = item.regularTime;
       }
       else{
         $scope.tmpId = false;
@@ -290,7 +361,12 @@ angular.module('sbAdminApp')
           console.log(data.attributes);
           $scope.showDeleteButton = false;
           var holidayDate = data.sortDate;
-          var createdAt = new Date(monthNames[holidayDate.getMonth()] + ' ' + (holidayDate.getDate() + 1) + ' ' + holidayDate.getFullYear());
+          var createdAt = new Date(monthNames[holidayDate.getMonth()] + ' ' + holidayDate.getDate() + ' ' + holidayDate.getFullYear());
+
+          if(createdAt.getTimezoneOffset() !== 0){
+            createdAt.setDate(createdAt.getDate() + 1);
+          }          
+
           var PeriodLog = Parse.Object.extend("PeriodLog");
           var periodLog = new PeriodLog();
           periodLog.set('periodDate', createdAt);
@@ -305,13 +381,16 @@ angular.module('sbAdminApp')
             departureAM : '',
             departurePM : '',
             totalTime : minutesToHours(0),
-            periodDate : data.attributes.periodDate,
+            periodDate : periodLog.attributes.periodDate,
             employee : {
               id : data.attributes.employeeId,
               name : data.attributes.employeeName || data.attributes.name,
               isCrossDate : data.attributes.isCrossDate || false
             }
           }
+
+          console.log($scope.newReportData);
+
         }else{
           $scope.editReportRow = data;
           $scope.newReportData = {
@@ -334,10 +413,13 @@ angular.module('sbAdminApp')
           }
         }
       } else{
-        console.log('new!');
-        console.log(data.attributes);
         $scope.showDeleteButton = false;
-        var createdAt = new Date(data.attributes.date.month + ' ' + (data.attributes.date.day + 1) + ' ' + data.attributes.date.year);
+        var createdAt = new Date(data.attributes.date.month + ' ' + data.attributes.date.day + ' ' + data.attributes.date.year);
+
+        if(createdAt.getTimezoneOffset() !== 0){
+          createdAt.setDate(createdAt.getDate() + 1);
+        }        
+
         var PeriodLog = Parse.Object.extend("PeriodLog");
         var periodLog = new PeriodLog();
         periodLog.set('periodDate', createdAt);
@@ -369,6 +451,7 @@ angular.module('sbAdminApp')
 
     $scope.updateReportRow = function(isRequest, isDelete){
       console.log($scope.newReportData);
+      console.log($scope.newReportData.periodDate);
       if(isRequest){
         var EditReportRequests = Parse.Object.extend("EditReportRequests");
         var query = new EditReportRequests();
@@ -481,6 +564,7 @@ angular.module('sbAdminApp')
             id : value.id,
             name : value.attributes.firstName + ' ' +value.attributes.lastName,
             readableName : value.attributes.firstName + ' ' +value.attributes.lastName,
+            regularTime : value.attributes.regularTime,
             employeeId: value.attributes.employeeId,
             isCrossDate : value.get('isCrossDate')
           };
@@ -504,6 +588,7 @@ angular.module('sbAdminApp')
         $scope.settings = results[0];
 
         $scope.inCharge = $scope.settings.get('inCharge');
+        $scope.secondaryInCharge = $scope.settings.get('secondaryInCharge');
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');
         $scope.appLogo = $scope.settings.get('primaryPhoto');
@@ -532,12 +617,12 @@ angular.module('sbAdminApp')
 
 
 
-    function getLogByUser(id, min, max, isPrintAll, employeeName, employeeId, isCrossDate){
+    function getLogByUser(id, min, max, isPrintAll, employeeName, employeeId, isCrossDate, regularTime){
       periodLogService.getPeriodLogsByUser(id, min, max)
       .then(function(results) {
         // Handle the result
         var data = results;
-        var regularDays = generateReportTemplate(id, min, employeeName, isCrossDate);
+        var regularDays = generateReportTemplate(id, min, employeeName, isCrossDate, regularTime);
 
         angular.forEach(data, function(value, key) {
           value.sortDate = value.get('periodDate');
@@ -563,6 +648,8 @@ angular.module('sbAdminApp')
           $scope.totalTime = 0;
           $scope.totalTimeMins = 0;
 
+          $scope.currentHolidays = results;
+
           $scope.regularDays = data.length
 
           angular.forEach(results, function(value, key) {
@@ -573,6 +660,7 @@ angular.module('sbAdminApp')
             value.set('totalTime', '480');
             value.set('employeeName', employeeName);
             value.set('employeeId', id);
+            value.set('regularTime', regularTime);
 
             if(isCrossDate){
               value.set('loginDate', 'holiday');
@@ -584,7 +672,7 @@ angular.module('sbAdminApp')
 
             var tmpDay = value.get('startTime');
             tmpDay = tmpDay.getDate();
-            console.log(regularDays[tmpDay - 1]);
+
             if(!regularDays[tmpDay - 1].id){
               regularDays[tmpDay - 1] = value;
             }
@@ -603,12 +691,12 @@ angular.module('sbAdminApp')
 
           totalTimeHours = minutesToHours(tmpTotalTime).hours;
           totalTimeMins = minutesToHours(tmpTotalTime).minutes;
-          console.log();
 
           $scope.batchReportList.push({
             employeeId : employeeId,
             name : employeeName,
             dataLogs : regularDays,
+            regularTime : regularTime,
             isCrossDate : isCrossDate || false,
             totalTime : {
               hours : totalTimeHours,
@@ -632,12 +720,12 @@ angular.module('sbAdminApp')
     };
 
     $scope.itemObjectSelected = function(item) {
-      console.log(item);
       if(item !== null){
         $scope.tmpId = item.id;
         $scope.employeeInfo.name = item.name;
         $scope.employeeInfo.employeeId = item.employeeId;
         $scope.employeeInfo.isCrossDate = item.isCrossDate;
+        $scope.employeeInfo.regularTime = item.regularTime;
       }
       else{
         $scope.tmpId = false;
@@ -674,13 +762,13 @@ angular.module('sbAdminApp')
         angular.forEach($scope.sortLists, function(value, key) {
           if(value.id !== 'all'){
             console.log(value);
-            getLogByUser(value.id, min, max, true, value.name, value.employeeId, value.isCrossDate);
+            getLogByUser(value.id, min, max, true, value.name, value.employeeId, value.isCrossDate, value.regularTime);
           }
         });
 
       } else {
         console.log($scope.employeeInfo);
-        getLogByUser($scope.tmpId, min, max, false, $scope.employeeInfo.name, $scope.employeeInfo.employeeId, $scope.employeeInfo.isCrossDate);
+        getLogByUser($scope.tmpId, min, max, false, $scope.employeeInfo.name, $scope.employeeInfo.employeeId, $scope.employeeInfo.isCrossDate, $scope.employeeInfo.regularTime);
       }
     }
 

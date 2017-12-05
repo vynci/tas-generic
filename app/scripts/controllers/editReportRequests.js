@@ -77,7 +77,6 @@ angular.module('sbAdminApp')
 			alert('Invalid Password! Please contact admin for assistance.');
 			$scope.isAuthenticated = false;
 		}
-
 	}
 
 	$scope.confirmAction = function(action, requestLog){

@@ -209,6 +209,16 @@
                 </select>
               </div>
 
+              <div class="form-group">
+                <label for="exampleInputName2">Regular Time-in: </label><br>
+                <input type="number" max="23" min="0" ng-model="user.regularTime.timeIn.hours" placeholder="8"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.timeIn.minutes" /><br>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputName2">Regular Time-out: </label><br>
+                <input type="number" max="23" min="0" ng-model="user.regularTime.timeOut.hours" placeholder="17"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.timeOut.minutes" /><br>
+              </div>
+
               <div class="form-group" ng-repeat="row in userTable">
                 <label>{{row.field}}</label>
                 <input class="form-control" placeholder="">
@@ -220,7 +230,8 @@
             </div>
             <div class="col-lg-5">
               <div class="form-group">
-                <label>Profile Picture (Max: 2MB)</label>
+                <label>Profile Picture (Max: 300kb)</label>
+                <p style="font-size:11px;">Suggested Size: 320 x 320 - less than 100kb</p>
                 <!--<input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)"/>-->
 
                 <img ng-show="previewImage" ng-src="{{previewImage}}" style="width:100%;">
@@ -229,7 +240,7 @@
                 <file-field ng-model="uploadFile" preview="previewImage">Select File</file-field>
               </div>
 
-              <div ng-if="!modal.isUpdate"><b>File Size: </b><span ng-class="checkFileSize(uploadFile.size)">{{convertToMB(uploadFile.size)}} MB</span><b style="color: #d9534f" ng-if="uploadFile.size > 2000000"> Warning!</b></div><br>
+              <div ng-if="!modal.isUpdate"><b>File Size: </b><span ng-class="checkFileSize(uploadFile.size)">{{convertToMB(uploadFile.size)}} kb</span><b style="color: #d9534f" ng-if="uploadFile.size > 2000000"> Warning!</b></div><br>
 
               <div class="form-group" ng-hide="modal.isUpdate">
                 <label>Finger Print</label> <label ng-if="!enableRFID"><label class="text-danger" ng-if="buttonScanStatus != 'btn-success && !enableRFID'">(Required)</label></label>
@@ -244,7 +255,7 @@
                   <br>
                 </div>
               </div>
-              <div class="form-group" ng-show="modal.isUpdate">
+              <div class="form-group" ng-show="modal.isUpdate" style="margin-bottom: 0px;">
                 <label>Finger Print Id: </label> <label class="text-danger" ng-if="buttonScanStatus != 'btn-success'">{{user.fingerPrintId || 'n/a'}}</label>
                 <br>
                 <button type="button" ng-hide="isCurrentFingerDeleted" ng-click="updateFingerPrintInit()" ng-class="buttonScanStatus" class="btn btn-block">{{scanStatus}}</button>
@@ -260,6 +271,71 @@
                   <br>
                 </div>
               </div>
+
+              <div ng-show="modal.isUpdate && !isDeleteLogsByUser">
+                <button type="button" ng-show="modal.isUpdate" ng-click="activateDeleteLogsByUser()" class="btn btn-danger btn-block">Delete User Logs</button>
+              </div>
+
+              <div ng-show="modal.isUpdate && isDeleteLogsByUser && !isConfirmDeleteLogsByUser">
+                <label for="">From</label>
+                <div class="row">
+                  <div class="col-xs-6">
+                    <form>
+                      <div class="form-group">
+                        <label for="startDate"><small>Month</small></label><br>
+                        <select class="form-control" name="repeatSelect" id="repeatSelect"
+                        ng-options="mothSelectName for mothSelectName in mothSelectNames"
+                        ng-model="selectedDateFrom.month"></select>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="col-xs-6">
+                    <form>
+                      <div class="form-group">
+                        <label><small>Year</small></label><br>
+                        <input class="form-control" type="number" max="3000" min="2000" ng-model="selectedDateFrom.year" />
+                      </div>
+                    </form>                                        
+                  </div>
+                </div>
+
+                <label for="">To</label>
+                <div class="row">
+                  <div class="col-xs-6">
+                    <form>
+                      <div class="form-group">
+                        <label for="startDate"><small>Month</small></label><br>
+                        <select class="form-control" name="repeatSelect" id="repeatSelect"
+                        ng-options="mothSelectName for mothSelectName in mothSelectNames"
+                        ng-model="selectedDateTo.month"></select>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="col-xs-6">
+                    <form>
+                      <div class="form-group">
+                        <label><small>Year</small></label><br>
+                        <input class="form-control" type="number" max="3000" min="2000" ng-model="selectedDateTo.year" />
+                      </div>
+                    </form>                                        
+                  </div>
+                </div>
+                <button type="button" ng-show="modal.isUpdate" ng-click="deleteLogsByUser()" class="btn btn-danger btn-block" style="margin-bottom: 8px;">Delete Logs</button>
+              </div>
+
+              <div ng-show="isConfirmDeleteLogsByUser">
+                This will delete {{user.lastName}}'s logs from the first day of {{selectedDateFrom.month}} {{selectedDateFrom.year}} to the last day of {{selectedDateTo.month}} {{selectedDateTo.year}}. Make sure to:<br><br>
+                1. Backup soft and hardcopy of DTR<br>
+                2. Backup Database (Automatic)<br><br>
+                <input class="form-control" placeholder="Enter Secondary Password" type="password" ng-model="confirmSecondaryPassword" style="margin-bottom: 8px;">
+                <!--<input class="form-control" placeholder="Enter Config Password" style="margin-bottom: 8px;">-->
+
+                <button type="button" ng-show="modal.isUpdate" ng-click="confirmDeleteLogsByUser()" class="btn btn-danger btn-block" style="margin-bottom: 8px;">Continue Delete Logs</button>
+              </div>
+              <button ng-show="isDeleteLogsByUser" type="button" ng-show="modal.isUpdate" ng-click="cancelDeleteLogsByUser()" class="btn btn-default btn-block">Cancel Delete Logs</button>
+              <p ng-show="isSecondaryPasswordInvalid" style="text-align:center;">Invalid Password</p>
+              <p ng-show="isSecondaryPasswordValid" style="text-align:center;">Delete Logs Successful</p>
+
             </div>
           </div>
 
@@ -271,11 +347,20 @@
             <button type="button" ng-click="cancelDelete()" class="btn btn-default">Cancel</button>
             <br><br>
           </div>
+          <div class="row">
+            <div class="col-xs-6" style="text-align: left;">
+              <span ng-show="modal.isUpdate">
+                Total Logs: {{totalLogsOfCurrentEmployee}}
+              </span>              
+            </div>
+            <div class="col-xs-6">
+              <button type="button" ng-hide="modal.isUpdate" ng-click="addUser()" class="btn btn-primary" data-dismiss="modal" ng-disabled="uploadFile.size >= 2000000 || isScanFinger || isRFIDDouble">{{modal.mode}}</button>
+              <button type="button" ng-show="modal.isUpdate" ng-click="updateUser()" class="btn btn-primary" data-dismiss="modal">{{modal.mode}}</button>
+              <button type="button" ng-show="modal.isUpdate" ng-click="confirmDelete()" class="btn btn-danger">Delete User</button>
+              <button type="button" ng-click="closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
 
-          <button type="button" ng-hide="modal.isUpdate" ng-click="addUser()" class="btn btn-primary" data-dismiss="modal" ng-disabled="uploadFile.size >= 2000000 || isScanFinger || isRFIDDouble">{{modal.mode}}</button>
-          <button type="button" ng-show="modal.isUpdate" ng-click="updateUser()" class="btn btn-primary" data-dismiss="modal">{{modal.mode}}</button>
-          <button type="button" ng-show="modal.isUpdate" ng-click="confirmDelete()" class="btn btn-danger">Delete</button>
-          <button type="button" ng-click="closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
 

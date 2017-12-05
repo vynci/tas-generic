@@ -7,6 +7,11 @@ body {
   font-size: 75% !important;
 }*/
 
+.weekend-indicator {
+  color: red !important;
+  font-weight: bolder;
+}
+
 .log-bold{
   font-weight: bold;
   color : #d9534f;

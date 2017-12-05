@@ -58,6 +58,7 @@ angular.module('sbAdminApp')
           secondary : $scope.settings.get('companyNameSubtitle2')
         }
         $scope.inCharge = $scope.settings.get('inCharge');
+        $scope.secondaryInCharge = $scope.settings.get('secondaryInCharge');
 
         $scope.colorThemes = $scope.settings.get('colorThemes');
         $scope.displayedCollection = $scope.settings.get('userTable');
@@ -178,7 +179,7 @@ angular.module('sbAdminApp')
             }
           });
         },function(err){
-          alert('Picture should not exceed 2mb, Please Try again.');
+          alert('Picture should not exceed 300kb, Please Try again.');
         });
 
       }
@@ -215,7 +216,7 @@ angular.module('sbAdminApp')
             }
           });
         },function(err){
-          alert('Picture should not exceed 2mb, Please Try again.');
+          alert('Picture should not exceed 300kb, Please Try again.');
         });
 
       }
@@ -251,7 +252,7 @@ angular.module('sbAdminApp')
             }
           });
         },function(err){
-          alert('Picture should not exceed 2mb, Please Try again.');
+          alert('Picture should not exceed 300kb, Please Try again.');
         });
 
       }
@@ -318,6 +319,7 @@ angular.module('sbAdminApp')
         settings.set("companyNameSubtitle1", $scope.companyNameSubtitles.primary);
         settings.set("companyNameSubtitle2", $scope.companyNameSubtitles.secondary);
         settings.set("inCharge", $scope.inCharge);
+        settings.set("secondaryInCharge", $scope.secondaryInCharge);
 
         if($scope.isShowTotalTime === "true"){
           settings.set("isShowTotalTime", true);
@@ -437,6 +439,7 @@ angular.module('sbAdminApp')
 
     $scope.updateSoftware = function(){
       $scope.isUpgradeSoftwareError = false;
+
       settingsService.updateSoftware()
       .then(function(results) {
         // Handle the result

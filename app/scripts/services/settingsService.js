@@ -51,6 +51,28 @@ app.service('settingsService', function($q, $http) {
 		return def.promise;
 	}
 
+	var modifyDBSchema = function(className, field, type) {
+		var def = $q.defer();
+
+		var payload = {
+			"className": className,
+			"fields":{}
+		}
+
+		payload.fields[field] = {
+			type : type
+		};
+
+		$http.put("http://172.24.1.1:1337/parse/schemas/" + className, payload)
+		.success(function(data) {
+			def.resolve(data);
+		})
+		.error(function() {
+			def.reject("Failed to modify schema");
+		});
+		return def.promise;
+	}
+
 	var reboot = function(userId) {
 		console.log('rebooting');
 		var def = $q.defer();
@@ -160,7 +182,8 @@ app.service('settingsService', function($q, $http) {
 		powerOff : powerOff,
 		reformatFingerPrint : reformatFingerPrint,
 		getMedia : getMedia,
-		updateSoftware : updateSoftware
+		updateSoftware : updateSoftware,
+		modifyDBSchema : modifyDBSchema
 	};
 
 });
