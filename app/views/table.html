@@ -144,7 +144,6 @@
         <div class="dataTable_wrapper">
           <div ng-repeat="batchReport in batchReportList track by $index">
             <h3>{{batchReport.name}}</h3>
-
             <table ng-if="batchReport.isCrossDate" st-table="batchReport.data" st-safe-src="rowCollection" class="table table-striped table-bordered">
               <thead>
 
@@ -229,8 +228,10 @@
 
 
         <div class="dataTable_wrapper" id="printable" style="display:none;">
-
           <div ng-repeat="batchReport in batchReportList track by $index">
+            <div ng-if="isShowWaterMark" id="background" style="position:absolute; z-index:0; background:white; opacity:0.1; margin-top:50%;">
+              <p id="bg-text" style="color:lightgrey; font-size:42px; transform:rotate(300deg); -webkit-transform:rotate(300deg);"><img ng-src="{{appLogo}}" style="width: 100px;" alt="">{{companyName}}</p>
+            </div>            
             <!-- <br> -->
               <div>
                 <div ng-if="isDTRHeaderCustomizable">
@@ -264,23 +265,34 @@
                 <div class="text-center" style="border-bottom: 1px solid; height: 20px;"><p>{{batchReport.name}}</p></div>
                 <div class="text-center"><p style="font-size:90%;">(Name)</p></div>
                 <div class="row" ng-disabled="!tmpId" style="margin-right:0px;">
-                  <div class="col-xs-4" style="padding-right:5px;"><p style="font-size:75%;"><em>For the month of</em></p></div>
+                  <div class="col-xs-4"><p style="font-size:75%;"><em>For the month of</em></p></div>
                   <div class="col-xs-8" style="border-bottom: 1px solid; height: 20px;"><p class="small"> {{selectedDate.month}} {{selectedDate.year}}</p></div>
                 </div>
                 <div class="row" style="margin-right:0px;">
-                  <div class="col-xs-6" style="padding-right:0px;"><p style="font-size:75%;"><em>Official hours for arrival</em></p></div>
-                  <div class="col-xs-3" style="padding-right:5px; padding-left:0px; text-align: right;"><p style="font-size:75%;"><em>Regular Days</em></p></div>
-                  <div class="col-xs-3" style="border-bottom: 1px solid; height: 20px;"><p class="small"></p></div>
+                  <div class="col-xs-8"><p style="font-size:75%;"><em>Official hours arrival and departure</em></p></div>
+                  <div class="col-xs-4" style="border-bottom: 1px solid; height: 20px; padding-left:0px; padding-right:0px;">
+                    <p style="text-align:left; font-size:66%;">
+                      {{batchReport.regularTime.morningTimeIn.hours}}:{{parseMinutes(batchReport.regularTime.morningTimeIn.minutes)}}-{{batchReport.regularTime.morningTimeOut.hours}}:{{parseMinutes(batchReport.regularTime.morningTimeOut.minutes)}} ; {{batchReport.regularTime.afternoonTimeIn.hours}}:{{parseMinutes(batchReport.regularTime.afternoonTimeIn.minutes)}}-{{batchReport.regularTime.afternoonTimeOut.hours}}:{{parseMinutes(batchReport.regularTime.afternoonTimeOut.minutes)}}
+                    </p>
+                  </div>
                 </div>
                 <div class="row" style="margin-right:0px;">
-                  <div class="col-xs-6 text-center" style="padding-right:0px;"><p style="font-size:75%;"><em>and departure</em></p></div>
-                  <div class="col-xs-3" tyle="padding-right:5px; padding-left:0px; text-align: right;"><p style="font-size:75%;"><em>Saturdays</em></p></div>
-                  <div class="col-xs-3" style="border-bottom: 1px solid; height: 20px;"><p class="small"></p></div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-12" style="text-align: right;">
-                    {{batchReport.regularTime.timeIn.hours}} : {{parseMinutes(batchReport.regularTime.timeIn.minutes)}} - {{batchReport.regularTime.timeOut.hours}} : {{parseMinutes(batchReport.regularTime.timeOut.minutes)}}
+                  <div class="col-xs-6"><p style="font-size:75%;"><em>Regular Days</em></p></div>
+                  <div class="col-xs-6" style="border-bottom: 1px solid; height: 20px; padding-left:0px;">
+                    <p style="text-align:left; font-size:66%;">
+                      {{batchReport.userRegularDays}}
+                    </p>
                   </div>
+                  <div class="col-xs-2"></div>
+                </div>                
+                <div class="row" style="margin-right:0px;">
+                  <div class="col-xs-6"><p style="font-size:75%;"><em>Saturdays</em></p></div>
+                  <div class="col-xs-6" style="border-bottom: 1px solid; height: 20px; padding-left:0px;">
+                    <p style="text-align:left; font-size:66%;">
+                      {{batchReport.saturdays}}
+                    </p>
+                  </div>
+                  <div class="col-xs-2"></div>
                 </div>
               </div>
 

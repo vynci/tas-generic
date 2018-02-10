@@ -100,7 +100,7 @@ angular.module('sbAdminApp')
     'lastName' : '',
     'gender' : 'Male',
     'isCrossDate' : 'false',
-    'regularDays' : 'Monday-Friday',
+    'userRegularDays' : 'Monday-Friday',
     'saturdays' : 'As Required',
     'regularTime' : {
       morningTimeIn : {
@@ -191,7 +191,7 @@ angular.module('sbAdminApp')
     $scope.detectedRFID = null;
     $scope.rfidDetectStatus = null;
     $scope.deleteConfirmation = false;
-    $scope.user.regularDays = 'Monday-Friday';
+    $scope.user.userRegularDays = 'Monday-Friday';
     $scope.user.saturdays = 'As Required';
     $scope.user.regularTime = {
       morningTimeIn : {
@@ -257,6 +257,8 @@ angular.module('sbAdminApp')
       }
       
       $scope.user.regularTime = result[0].get('regularTime');
+      $scope.user.userRegularDays = result[0].get('userRegularDays');
+      $scope.user.saturdays = result[0].get('saturdays');
       currentEmployee = result[0];
 
       periodLogService.getNumberOfLogsByUser(id)
@@ -293,6 +295,8 @@ angular.module('sbAdminApp')
     }
 
     currentEmployee.set("regularTime", $scope.user.regularTime);
+    currentEmployee.set("userRegularDays", $scope.user.userRegularDays);
+    currentEmployee.set("saturdays", $scope.user.saturdays);
 
     if($scope.isCurrentFingerDeleted){
       var fingerPrintId = fingerPrintIdPool[0];
@@ -464,7 +468,7 @@ angular.module('sbAdminApp')
         $scope.previewImage = '';
         $scope.scanStatus = 'Scan';
         $scope.buttonScanStatus = 'btn-info';
-        $scope.user.regularDays = 'Monday-Friday';
+        $scope.user.userRegularDays = 'Monday-Friday';
         $scope.user.saturdays = 'As Required';
         $scope.user.regularTime = {
           morningTimeIn : {
@@ -622,6 +626,8 @@ angular.module('sbAdminApp')
         }
 
         employee.set("regularTime", $scope.user.regularTime);
+        employee.set("userRegularDays", $scope.user.userRegularDays);
+        employee.set("saturdays", $scope.user.saturdays);
 
         employee.save(null, {
           success: function(result) {
@@ -687,6 +693,8 @@ angular.module('sbAdminApp')
       }
 
       employee.set("regularTime", $scope.user.regularTime);
+      employee.set("userRegularDays", $scope.user.userRegularDays);
+      employee.set("saturdays", $scope.user.saturdays);      
 
       employee.save(null, {
         success: function(result) {

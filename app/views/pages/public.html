@@ -3,13 +3,13 @@
 	</div>
 	<br>
 	<div class="row" >
-		<div class="col-md-2">
+		<div class="col-xs-2 col-sm-2 col-md-2">
 			<img ng-src="{{secondaryPhoto}}" style="height: 130px; max-height: 130px;">
 		</div>
-		<div class="col-md-2">
+		<div class="col-xs-2 col-sm-2 col-md-2">
 		</div>
 
-		<div class="col-md-4">
+		<div class="col-xs-4 col-sm-4 col-md-4">
 			<!-- <div ng-if="editReportRequests.length" class="panel panel-default" style="background: white; opacity: 0.8;">
 				<div class="panel-heading">
 					Edit Report Requests
@@ -22,7 +22,7 @@
 		<!-- <div class="col-md-2">
 
 		</div> -->
-		<div class="col-md-4" style="text-align: right; padding-right: 25px !important;">
+		<div class="col-xs-4 col-sm-4 col-md-4" style="text-align: right; padding-right: 25px !important;">
 			<img ng-src="{{primaryPhoto}}" style="height: 130px; max-height: 130px;">
 		</div>
 	</div>
@@ -31,7 +31,7 @@
 		<br>
 
 		<div class="row">
-			<div class="col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px; height: 180px; max-height: 180px;" ng-style="clockColor.background" ng-click="redirectToLogin()">
+			<div class="col-xs-6 col-xs-offset-3 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px; height: 180px; max-height: 180px;" ng-style="clockColor.background" ng-click="redirectToLogin()">
 				<div>
 					<h1 class="text-center public-clock-time" ng-style="clockColor.text"><b style="font-size: 78px;">{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
 					<h4 class="text-center public-clock-date" ng-style="clockColor.text">{{currentDate}} <span ng-if="isFlashDriveEmpty" style="color: red; font-size: 35px;" class="fa fa-flash"></span></h4>
@@ -52,7 +52,7 @@
 		</div>
 		<br>
 		<div ng-show="isPublicTable" class="row">
-			<div class="col-lg-6">
+			<div class="col-xs-6 col-sm-6 col-lg-6">
 				<div class="panel panel-default" style="background: white; opacity: 0.8;">
 					<div class="panel-heading">
 						Morning Log
@@ -82,7 +82,7 @@
 				</div>
 			</div>
 
-			<div class="col-lg-6">
+			<div class="col-xs-6 col-sm-6 col-lg-6">
 				<div class="panel panel-default" style="background: white; opacity: 0.8;">
 					<div class="panel-heading">
 						{{pmIdentifier}}

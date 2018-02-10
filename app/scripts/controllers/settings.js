@@ -19,6 +19,8 @@ angular.module('sbAdminApp')
     $scope.sortLists=[{id:0, name:"Text"},{id:1,name:"Number"},{id:2,name:"Date"},{id:3,name:"Boolean"}];
 
     $scope.settings = {};
+    $scope.currentAlarmId;
+    $scope.testAlarmStatus = 'Test Alarm';
 
     $scope.timeSettings = {
       currentTime :'',
@@ -93,7 +95,7 @@ angular.module('sbAdminApp')
         $scope.timeSettings.backupTime = $scope.settings.get('backupTime');
 
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
-        $scope.isShowWaterMark = $scope.settings.get('isShowWaterMark') || true;
+        $scope.isShowWaterMark = $scope.settings.get('isShowWaterMark') || false;
         $scope.enableOvertimeOption = $scope.settings.get('enableOvertimeOption');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');
         $scope.enableAlarm = $scope.settings.get('enableAlarm') || false;
@@ -759,15 +761,19 @@ angular.module('sbAdminApp')
           // error is a Parse.Error with an error code and message.
         }
       });      
+    }
+
+    $scope.setCurrentAlarmId = function(id) {
+      $scope.currentAlarmId = id;
     }    
 
-    $scope.deleteAlarmItem = function(id) {
-      console.log(id);
+    $scope.deleteAlarmItem = function() {
+      console.log($scope.currentAlarmId);
       var arrayLength = $scope.alarmList.length;
       console.log($scope.alarmList);
       for (var i = 0; i < arrayLength; i++) {
         if($scope.alarmList[i]) {
-          if($scope.alarmList[i].id === id){
+          if($scope.alarmList[i].id === $scope.currentAlarmId){
             $scope.alarmList.splice(i, 1);
           }          
         }
@@ -783,5 +789,20 @@ angular.module('sbAdminApp')
       } else {
         $scope.$apply();
       }
-    }  
+    } 
+
+    $scope.testAlarm = function(){
+      $scope.testAlarmStatus = 'Activating Alarm...';
+      settingsService.testAlarm()
+      .then(function(results) {
+        // Handle the result
+        $scope.testAlarmStatus = 'Test Alarm';
+        console.log(results);
+      }, function(err) {
+        // Error occurred
+        console.log(err);
+      }, function(percentComplete) {
+        console.log(percentComplete);
+      });      
+    } 
 });

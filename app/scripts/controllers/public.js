@@ -37,6 +37,7 @@ angular.module('sbAdminApp')
     $scope.isPublicTable = true;
     $scope.isFlashDriveEmpty = true;
     $scope.pmIdentifier = 'Afternoon Log';
+    $scope.windowWidth = window.width;
 
     startTime();
 

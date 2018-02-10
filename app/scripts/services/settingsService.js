@@ -157,6 +157,20 @@ app.service('settingsService', function($q, $http) {
 		return def.promise;
 	}
 
+	var testAlarm = function(){
+
+		var def = $q.defer();
+
+		$http.get("http://172.24.1.1:1337/test-alarm")
+		.success(function(data) {
+			def.resolve(data);
+		})
+		.error(function() {
+			def.reject("Failed to Set Time");
+		});
+		return def.promise;
+	}	
+
 	var backup = function(process){
 
 		var def = $q.defer();
@@ -183,7 +197,8 @@ app.service('settingsService', function($q, $http) {
 		reformatFingerPrint : reformatFingerPrint,
 		getMedia : getMedia,
 		updateSoftware : updateSoftware,
-		modifyDBSchema : modifyDBSchema
+		modifyDBSchema : modifyDBSchema,
+		testAlarm : testAlarm
 	};
 
 });
