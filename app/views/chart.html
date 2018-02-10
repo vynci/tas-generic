@@ -210,14 +210,34 @@
               </div>
 
               <div class="form-group">
-                <label for="exampleInputName2">Regular Time-in: </label><br>
-                <input type="number" max="23" min="0" ng-model="user.regularTime.timeIn.hours" placeholder="8"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.timeIn.minutes" /><br>
+                <label>Regular Days</label>
+                <input class="form-control" placeholder="Ex: Monday-Friday" ng-model="user.regularDays">
               </div>
 
               <div class="form-group">
-                <label for="exampleInputName2">Regular Time-out: </label><br>
-                <input type="number" max="23" min="0" ng-model="user.regularTime.timeOut.hours" placeholder="17"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.timeOut.minutes" /><br>
+                <label>Saturday</label>
+                <input class="form-control" placeholder="Ex: As Required" ng-model="user.saturdays">
+              </div>              
+
+              <div class="form-group">
+                <label for="exampleInputName2">Regular Morning Arrival: </label><br>
+                <input type="number" max="23" min="0" ng-model="user.regularTime.morningTimeIn.hours" placeholder="8"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.morningTimeIn.minutes" /><br>
               </div>
+
+              <div class="form-group">
+                <label for="exampleInputName2">Regular Morning Departure: </label><br>
+                <input type="number" max="23" min="0" ng-model="user.regularTime.morningTimeOut.hours" placeholder="17"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.morningTimeOut.minutes" /><br>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputName2">Regular Afternoon Arrival: </label><br>
+                <input type="number" max="23" min="0" ng-model="user.regularTime.afternoonTimeIn.hours" placeholder="8"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.afternoonTimeIn.minutes" /><br>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputName2">Regular Afternoon Departure: </label><br>
+                <input type="number" max="23" min="0" ng-model="user.regularTime.afternoonTimeOut.hours" placeholder="17"/> : <input placeholder="0" type="number" min="0" max="59" ng-model="user.regularTime.afternoonTimeOut.minutes" /><br>
+              </div>              
 
               <div class="form-group" ng-repeat="row in userTable">
                 <label>{{row.field}}</label>

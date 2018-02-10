@@ -100,15 +100,25 @@ angular.module('sbAdminApp')
     'lastName' : '',
     'gender' : 'Male',
     'isCrossDate' : 'false',
+    'regularDays' : 'Monday-Friday',
+    'saturdays' : 'As Required',
     'regularTime' : {
-      timeIn : {
+      morningTimeIn : {
         hours: 8,
         minutes:0
       },
-      timeOut : {
+      morningTimeOut : {
+        hours: 12,
+        minutes:0
+      },
+      afternoonTimeIn : {
+        hours: 13,
+        minutes:0
+      },
+      afternoonTimeOut : {
         hours: 17,
         minutes:0
-      }      
+      }
     },
     'age' : ''
   }
@@ -181,15 +191,25 @@ angular.module('sbAdminApp')
     $scope.detectedRFID = null;
     $scope.rfidDetectStatus = null;
     $scope.deleteConfirmation = false;
+    $scope.user.regularDays = 'Monday-Friday';
+    $scope.user.saturdays = 'As Required';
     $scope.user.regularTime = {
-      timeIn : {
+      morningTimeIn : {
         hours: 8,
         minutes:0
       },
-      timeOut : {
+      morningTimeOut : {
+        hours: 12,
+        minutes:0
+      },
+      afternoonTimeIn : {
+        hours: 13,
+        minutes:0
+      },
+      afternoonTimeOut : {
         hours: 17,
         minutes:0
-      }      
+      }
     };
 
   };
@@ -444,16 +464,25 @@ angular.module('sbAdminApp')
         $scope.previewImage = '';
         $scope.scanStatus = 'Scan';
         $scope.buttonScanStatus = 'btn-info';
-
+        $scope.user.regularDays = 'Monday-Friday';
+        $scope.user.saturdays = 'As Required';
         $scope.user.regularTime = {
-          timeIn : {
+          morningTimeIn : {
             hours: 8,
             minutes:0
           },
-          timeOut : {
+          morningTimeOut : {
+            hours: 12,
+            minutes:0
+          },
+          afternoonTimeIn : {
+            hours: 13,
+            minutes:0
+          },
+          afternoonTimeOut : {
             hours: 17,
             minutes:0
-          }      
+          }
         };
 
         $modalStack.dismissAll();
