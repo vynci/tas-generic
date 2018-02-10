@@ -211,6 +211,74 @@
   </div>
 </div>
 <br>
+
+<div class="row" ng-if="enableAlarm">
+  <div class="col-xs-6 col-lg-6 col-lg-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Alarm Settings
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-4 col-lg-4 col-lg-4">
+            <div><strong>Time (24hr format) </strong> </div>
+            <input style="width:60px !important; padding: 5px !important;" type="number" max="23" min="0" ng-model="alarmSettings.hour" /> : <input style="width:60px !important; padding: 5px !important;" type="number" min="0" max="59" ng-model="alarmSettings.minute" />
+          </div>
+          <div class="col-xs-4 col-lg-4 col-lg-4">
+            <div><strong>Day</strong> </div>
+            <select class="form-control" ng-model="alarmSettings.dayOfWeek">
+              <option value="everyday">Everyday</option>
+              <option value="weekdays">Weekdays</option>
+              <option value="weekends">Weekends</option>
+              <option value="monday">Monday</option>              
+              <option value="tuesday">Tuesday</option>
+              <option value="wednesday">Wednesday</option>
+              <option value="thursday">Thursday</option>
+              <option value="friday">Friday</option>
+              <option value="saturday">Saturday</option>
+              <option value="sunday">Sunday</option>
+            </select>
+          </div>
+          <div class="col-xs-2 col-lg-2 col-lg-2">
+            <div><strong>Duration</strong> </div>
+            <input style="width:60px !important; padding: 5px !important;" type="number" max="60" min="0" ng-model="alarmSettings.duration" />
+          </div>
+          <div class="col-xs-2 col-lg-2 col-lg-2">
+            <div><strong>Action</strong> </div>
+            <button type="button" ng-click="addAlarm()" class="btn btn-sm btn-success">
+              <i class="glyphicon glyphicon-plus">
+              </i> Add
+            </button>                        
+          </div>
+        </div>
+        <hr>
+        <div class="row" ng-repeat="item in alarmSettingsList" style="margin-bottom:5px;">
+          <div class="col-xs-4 col-lg-6 col-lg-4">
+            {{item.hour}}:{{item.minute}}
+          </div>
+          <div class="col-xs-4 col-lg-6 col-lg-4">
+            {{item.dayOfWeek}}
+          </div>
+          <div class="col-xs-2 col-lg-2 col-lg-2">
+            {{item.duration}} s
+          </div>
+          <div class="col-xs-2 col-lg-2 col-lg-2">
+            <button type="button" ng-click="deleteAlarmItem(item.id)" class="btn btn-sm btn-danger">
+              <i class="glyphicon glyphicon-trash">
+              </i>
+            </button> 
+          </div>
+        </div>
+      </div>  
+    </div>  
+  </div>
+  <div class="col-xs-6 col-lg-6 col-lg-6">
+    <p><b>Alarm Settings</b> lets you set an alarm by weekdays, weekends, everyday, or a specific day.
+    You can also specify the time and the duration of the alarm. <strong>This will require reboot for changes to take effect.</strong> </p>
+  </div>
+</div>
+
+<br>
 <div class="row">
   <div class="col-xs-6 col-lg-6 col-lg-6">
     <div class="panel panel-default">
@@ -430,7 +498,9 @@
   </div>
 
 </div>
+
 <br>
+
 <div class="row">
   <div class="col-xs-6 col-lg-6 col-lg-6">
     <div class="panel panel-default">
@@ -480,7 +550,7 @@
 <div class="row">
   <div class="col-xs-6 col-lg-6 col-md-6">
     <div class="col-xs-6 col-lg-6 col-md-6">
-      <div class="">Application Version <b>4.5</b></div>
+      <div class="">Application Version <b>4.6</b></div>
     </div>
     <div class="col-xs-6 col-lg-6 col-md-6">
       <button type="button" class="btn btn-warning btn-block" data-toggle="modal" ng-click="updateSoftware()" data-target="#updateSoftwareModal">Update Software</button>

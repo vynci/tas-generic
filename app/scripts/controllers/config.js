@@ -46,6 +46,9 @@ angular.module('sbAdminApp')
         $scope.enableRFID = {
           value : $scope.settings.get('enableRFID')
         };
+        $scope.enableAlarm = {
+          value : $scope.settings.get('enableAlarm') || false
+        };        
         $scope.hardwareType = {
           value : $scope.settings.get('hardwareType')
         };
@@ -69,6 +72,12 @@ angular.module('sbAdminApp')
         } else {
           $scope.enableRFID.value = "false";
         }
+
+        if($scope.enableAlarm.value){
+          $scope.enableAlarm.value = "true";
+        } else {
+          $scope.enableAlarm.value = "false";
+        }        
 
         getMedia();
 
@@ -262,6 +271,28 @@ angular.module('sbAdminApp')
         }
       });
     }
+
+    $scope.updateEnableAlarm = function(){
+
+      if($scope.enableAlarm.value === "true"){
+        $scope.settings.set("enableAlarm", true);
+      } else{
+        $scope.settings.set("enableAlarm", false);
+      }
+
+      $scope.settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          alert('successfully updated!');
+          getSettings();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          alert('update error!');
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+    }    
 
     $scope.updateHardwareType = function(){
 

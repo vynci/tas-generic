@@ -38,6 +38,16 @@ angular.module('sbAdminApp')
       }
     };
 
+    $scope.alarmSettings = {
+      id : 0,
+      hour : 8,
+      minute : 0,
+      duration : 3,
+      dayOfWeek : "weekdays"
+    }
+
+    $scope.alarmList = [];
+    $scope.alarmSettingsList = [];
     $scope.userTableFormat = {};
 
     getSettings();
@@ -85,10 +95,14 @@ angular.module('sbAdminApp')
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
         $scope.enableOvertimeOption = $scope.settings.get('enableOvertimeOption');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');
+        $scope.enableAlarm = $scope.settings.get('enableAlarm') || false;
         $scope.isTwoLogsEnable = $scope.settings.get('isTwoLogsEnable');
         $scope.isCutOffTime = $scope.settings.get('isCutOffTime');
 
         $scope.hardwareType = $scope.settings.get('hardwareType');
+
+        $scope.alarmList = $scope.settings.get('alarmBuzzer') || [];
+        $scope.alarmSettingsList = processAlarmList($scope.settings.get('alarmBuzzer') || []);
 
         if($scope.isShowTotalTime){
           $scope.isShowTotalTime = "true";
@@ -607,4 +621,154 @@ angular.module('sbAdminApp')
         console.log(percentComplete);
       });
     }
+
+    function processAlarmList(list) {
+      var arrayLength = list.length;
+      var result = [];
+      for (var i = 0; i < arrayLength; i++) {
+        result.push(decodeAlarmValues(list[i]));
+      }      
+      return result;
+    } 
+
+    function makeid() {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
+    }
+
+    function arraysTheSame(arr1, arr2) {
+      if(arr1.length !== arr2.length)
+          return false;
+      for(var i = arr1.length; i--;) {
+          if(arr1[i] !== arr2[i])
+              return false;
+      }
+
+      return true;
+    }    
+
+    function decodeAlarmValues(data){
+      var result = {
+        id : data.id,
+        hour : data.hour,
+        minute : data.minute,
+        duration : data.duration,
+        dayOfWeek : []
+      };
+      var dayOfWeek;
+
+      // process duration
+      result.duration = result.duration / 1000;
+      console.log(data);
+      if(arraysTheSame(data.dayOfWeek, [0,1,2,3,4,5,6,7])) {
+        result.dayOfWeek = 'everyday';
+      } else if(arraysTheSame(data.dayOfWeek, [1,2,3,4,5])) {
+        result.dayOfWeek = 'weekdays';
+      } else if(arraysTheSame(data.dayOfWeek, [6,7])) {
+        result.dayOfWeek = 'weekends';
+      } else if(arraysTheSame(data.dayOfWeek, [1])) {
+        result.dayOfWeek = 'monday';
+      } else if(arraysTheSame(data.dayOfWeek, [2])) {
+        result.dayOfWeek = 'tuesday';
+      } else if(arraysTheSame(data.dayOfWeek, [3])) {
+        result.dayOfWeek = 'wednesday';
+      } else if(arraysTheSame(data.dayOfWeek, [4])) {
+        result.dayOfWeek = 'thursday';
+      } else if(arraysTheSame(data.dayOfWeek, [5])) {
+        result.dayOfWeek = 'friday';
+      } else if(arraysTheSame(data.dayOfWeek, [6])) {
+        result.dayOfWeek = 'saturday';
+      } else if(arraysTheSame(data.dayOfWeek, [0])) {
+        result.dayOfWeek = 'sunday';
+      }
+
+      return result;
+    }
+
+    function encodeAlarmValues(data){
+      var result = {
+        id : data.id,
+        hour : data.hour,
+        minute : data.minute,
+        duration : data.duration,
+        dayOfWeek : []
+      };
+      var dayOfWeek;
+
+      // process duration
+      result.duration = result.duration * 1000;
+
+      if(data.dayOfWeek === 'everyday') {
+        result.dayOfWeek = [0,1,2,3,4,5,6,7];
+      } else if(data.dayOfWeek === 'weekdays') {
+        result.dayOfWeek = [1,2,3,4,5];
+      } else if(data.dayOfWeek === 'weekends') {
+        result.dayOfWeek = [6,7];
+      } else if(data.dayOfWeek === 'monday') {
+        result.dayOfWeek = [1];
+      } else if(data.dayOfWeek === 'tuesday') {
+        result.dayOfWeek = [2];
+      } else if(data.dayOfWeek === 'wednesday') {
+        result.dayOfWeek = [3];
+      } else if(data.dayOfWeek === 'thursday') {
+        result.dayOfWeek = [4];
+      } else if(data.dayOfWeek === 'friday') {
+        result.dayOfWeek = [5];
+      } else if(data.dayOfWeek === 'saturday') {
+        result.dayOfWeek = [6];
+      } else if(data.dayOfWeek === 'sunday') {
+        result.dayOfWeek = [0];
+      }
+
+      return result;
+    }
+
+    function saveAlarm(){
+      var Settings = Parse.Object.extend("Settings");
+      var settings = new Settings();
+
+      settings.id = settingId;
+      settings.set("alarmBuzzer", $scope.alarmList);
+
+      settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          $scope.alarmSettingsList = processAlarmList($scope.alarmList);
+          $scope.$apply();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          // error is a Parse.Error with an error code and message.
+        }
+      });      
+    }    
+
+    $scope.deleteAlarmItem = function(id) {
+      console.log(id);
+      var arrayLength = $scope.alarmList.length;
+      console.log($scope.alarmList);
+      for (var i = 0; i < arrayLength; i++) {
+        if($scope.alarmList[i]) {
+          if($scope.alarmList[i].id === id){
+            $scope.alarmList.splice(i, 1);
+          }          
+        }
+      }
+      saveAlarm();
+    }    
+
+    $scope.addAlarm = function(){
+      if($scope.alarmSettings.duration < 61) {
+        $scope.alarmSettings.id = makeid();
+        $scope.alarmList.push(encodeAlarmValues($scope.alarmSettings));
+        saveAlarm();
+      } else {
+        $scope.$apply();
+      }
+    }  
 });
