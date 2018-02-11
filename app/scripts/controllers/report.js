@@ -106,8 +106,13 @@ angular.module('sbAdminApp')
       var dateNow = new Date(month + ' ' + day + ' ' + year);
 
       if(currentLog === '-' || currentLog === undefined || currentLog === ''){
-        if(dateNow.getDay() === 6){
+        if(dateNow.getDay() === 6) {
           result = 'Saturday';
+          if($scope.selectedDate.month === 'February') {
+            if(day > 29) {
+              result = '-';
+            }
+          }
         }else if(dateNow.getDay() === 0){
           result = 'Sunday';
         }
@@ -248,7 +253,9 @@ angular.module('sbAdminApp')
 
     function generateReportTemplate(employeeId, date, employeeName, isCrossDate){
       var arr = [];
-      for(var i=0; i<31; i++ ){
+      var endDay = 31;
+
+      for(var i=0; i<endDay; i++ ){
         var blankEntry = {
           attributes : {
             date : {

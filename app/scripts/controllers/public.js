@@ -15,10 +15,13 @@ angular.module('sbAdminApp')
 
     var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    $scope.displayedCollection = [{'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'gender':'Male'}, 'time':'7:43 AM'},
-      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'gender':'Male'}, 'time':'7:43 AM'},
-      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'gender':'Male'}, 'time':'7:43 AM'},
-      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'gender':'Male'}, 'time':'7:43 AM'}
+    $scope.displayedCollection = [
+      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'position':'Teacher', 'time':'7:43 AM'}},
+      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'position':'Teacher', 'time':'7:43 AM'}},
+      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'position':'Teacher', 'time':'7:43 AM'}},
+      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'position':'Teacher', 'time':'7:43 AM'}},
+      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'position':'Teacher', 'time':'7:43 AM'}},
+      {'attributes':{'firstName':'Vince', 'lastName': 'Elizaga', 'position':'Teacher', 'time':'7:43 AM'}}
     ];
 
     $scope.detectedEmployee = {
@@ -28,6 +31,17 @@ angular.module('sbAdminApp')
       'age' : '',
       'avatar' : '"img/logo/logo_placeholder.png";'
     }
+
+    $scope.logoStyle = {};
+    $scope.clockColor = {};
+    $scope.clockStyle = {
+      outer : {
+        'color' : 'white',
+      }                    
+    }
+
+    $scope.isAlarmAM = false;
+    $scope.isAlarmPM = false;
 
     $scope.editReportRequests = [];
     var isCutOffTime = false;
@@ -46,6 +60,49 @@ angular.module('sbAdminApp')
     getEditReportRequests();
 
     getMedia();
+
+    detectScreenSize();
+
+    function detectScreenSize() {
+      if($scope.windowWidth <= 1024) {
+        $scope.logoStyle = {
+          primaryPhoto : {
+            height : '100px'
+          },
+          secondaryPhoto : {
+            height : '100px'
+          }
+        };
+
+        $scope.clockStyle = {
+          inner : {
+            'font-size': '60px'
+          },
+          outer : {
+            'color' : 'white',
+            'font-size' : '1em'
+          }                    
+        }
+
+        $scope.dateStyle = {
+          inner : {
+            'font-size': '30px'
+          }          
+        }
+
+        $scope.logListStyle = {
+          logFont : {
+            'font-size' : '14px'
+          }
+        }
+
+        $scope.iconStyle = {
+          flash : {
+            'font-size' : '30px'
+          }
+        }        
+      }
+    }
 
     function getEditReportRequests(){
       editReportRequests.getAll()
@@ -115,6 +172,10 @@ angular.module('sbAdminApp')
             text: {color: colorThemes.clockText}
           }
 
+          $scope.clockStyle.outer.color = colorThemes.clockText;
+          $scope.enableAlarm = $scope.settings.get('enableAlarm') || false;
+
+          checkAlarm($scope.settings.get('alarmBuzzer') || []);
         }
         getAll();
       }, function(err) {
@@ -123,6 +184,19 @@ angular.module('sbAdminApp')
       }, function(percentComplete) {
       });
     };
+
+    function checkAlarm(list) {
+        angular.forEach(list, function(value, key) {
+          console.log(value);
+          if(value.hour >= 12) {
+            $scope.isAlarmPM = true;
+          }
+
+          if(value.hour < 12) {
+            $scope.isAlarmAM = true;
+          }
+        });      
+    }
 
     function getAll(){
       console.log('get All!');

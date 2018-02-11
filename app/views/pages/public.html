@@ -4,7 +4,7 @@
 	<br>
 	<div class="row" >
 		<div class="col-xs-2 col-sm-2 col-md-2">
-			<img ng-src="{{secondaryPhoto}}" style="height: 130px; max-height: 130px;">
+			<img ng-src="{{secondaryPhoto}}" ng-style="logoStyle.secondaryPhoto" style="height: 130px; max-height: 130px;">
 		</div>
 		<div class="col-xs-2 col-sm-2 col-md-2">
 		</div>
@@ -23,7 +23,7 @@
 
 		</div> -->
 		<div class="col-xs-4 col-sm-4 col-md-4" style="text-align: right; padding-right: 25px !important;">
-			<img ng-src="{{primaryPhoto}}" style="height: 130px; max-height: 130px;">
+			<img ng-src="{{primaryPhoto}}" ng-style="logoStyle.primaryPhoto" style="height: 130px; max-height: 130px;">
 		</div>
 	</div>
 
@@ -33,8 +33,8 @@
 		<div class="row">
 			<div class="col-xs-6 col-xs-offset-3 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3" style="cursor:pointer; background: white; opacity: 0.8; border-radius: 10px; height: 180px; max-height: 180px;" ng-style="clockColor.background" ng-click="redirectToLogin()">
 				<div>
-					<h1 class="text-center public-clock-time" ng-style="clockColor.text"><b style="font-size: 78px;">{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
-					<h4 class="text-center public-clock-date" ng-style="clockColor.text">{{currentDate}} <span ng-if="isFlashDriveEmpty" style="color: red; font-size: 35px;" class="fa fa-flash"></span></h4>
+					<h1 class="text-center public-clock-time" ng-style="clockStyle.outer"><b ng-style="clockStyle.inner" style="font-size: 78px;">{{time}}</b> <b><span ng-if="editReportRequests.length || showNotifcations" style="color: red; font-size: 35px;" class="fa fa-exclamation-triangle"></span></b></h1>
+					<h4 class="text-center public-clock-date" ng-style="clockStyle.outer"> <span ng-style="dateStyle.inner">{{currentDate}}</span><span ng-if="isFlashDriveEmpty" style="color: red; font-size: 35px;" class="fa fa-flash" ng-style="iconStyle.flash"></span></h4>
 				</div>
 			</div>
 		</div>
@@ -55,9 +55,16 @@
 			<div class="col-xs-6 col-sm-6 col-lg-6">
 				<div class="panel panel-default" style="background: white; opacity: 0.8;">
 					<div class="panel-heading">
-						Morning Log
+						<div class="row">
+							<div class="col-xs-6 col-sm-6 col-lg-6">
+								Morning Log
+							</div>
+							<div class="col-xs-6 col-sm-6 col-lg-6" style="text-align:right">
+								<span ng-if="isAlarmAM && enableAlarm" style="color: gray; font-size: 18px;" class="fa fa-clock-o"></span></b>		
+							</div>							
+						</div>						
 					</div>
-					<div class="panel-body">
+					<div class="panel-body" ng-style="logListStyle.logFont">
 						<div class="dataTable_wrapper">
 							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 								<thead>
@@ -84,10 +91,17 @@
 
 			<div class="col-xs-6 col-sm-6 col-lg-6">
 				<div class="panel panel-default" style="background: white; opacity: 0.8;">
-					<div class="panel-heading">
-						{{pmIdentifier}}
+					<div class="panel-heading">						
+						<div class="row">
+							<div class="col-xs-6 col-sm-6 col-lg-6">
+								{{pmIdentifier}}
+							</div>
+							<div class="col-xs-6 col-sm-6 col-lg-6" style="text-align:right">
+								<span ng-if="isAlarmPM && enableAlarm" style="color: gray; font-size: 18px;" class="fa fa-clock-o"></span></b>		
+							</div>							
+						</div>						
 					</div>
-					<div class="panel-body">
+					<div class="panel-body"  ng-style="logListStyle.logFont">
 						<div class="dataTable_wrapper">
 							<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 								<thead>
