@@ -7,7 +7,7 @@
  * Controller of the sbAdminApp
  */
 angular.module('sbAdminApp')
-  .controller('ConfigCtrl', function($scope,$position,$state,$rootScope, settingsService) {
+  .controller('ConfigCtrl', function($scope,$position,$state,$rootScope, settingsService, $location) {
 
     var currentUser = Parse.User.current();
     $scope.secondaryPassword = {};
@@ -22,7 +22,22 @@ angular.module('sbAdminApp')
       value : ''
     }
 
+    $scope.changeSuperAdminPassword = {
+      new : '',
+      confirm : ''
+    }    
+
+    $scope.showChangeSuperAdminPassword = false;
+
     $scope.isAuthenticated = false;
+
+    checkSecret();
+
+    function checkSecret() {
+      if($location.search().secret === 'alas-admin') {
+        $scope.showChangeSuperAdminPassword = true;
+      }      
+    }
 
     function getSettings(){
       settingsService.getSetting()
@@ -48,7 +63,10 @@ angular.module('sbAdminApp')
         };
         $scope.enableAlarm = {
           value : $scope.settings.get('enableAlarm') || false
-        };        
+        };
+        $scope.enableUndertimeEdit = {
+          value : $scope.settings.get('enableUndertimeEdit') || false
+        };                 
         $scope.hardwareType = {
           value : $scope.settings.get('hardwareType')
         };
@@ -77,7 +95,19 @@ angular.module('sbAdminApp')
           $scope.enableAlarm.value = "true";
         } else {
           $scope.enableAlarm.value = "false";
-        }        
+        }       
+        
+        if($scope.enableUndertimeEdit.value){
+          $scope.enableUndertimeEdit.value = "true";
+        } else {
+          $scope.enableUndertimeEdit.value = "false";
+        }           
+
+        $scope.superAdminPassword = {
+          value : $scope.settings.get('superAdminPassword') || 'gregorian0525'
+        }
+
+        console.log($scope.superAdminPassword);
 
         getMedia();
 
@@ -109,7 +139,7 @@ angular.module('sbAdminApp')
     }
 
     $scope.login = function(){
-      if($scope.superAdmin.password === 'gregorian0525'){
+      if($scope.superAdmin.password === $scope.superAdminPassword.value){
         $scope.isAuthenticated = true;
       }else{
         alert('Invalid Config Password!');
@@ -293,6 +323,51 @@ angular.module('sbAdminApp')
         }
       });
     }    
+
+    $scope.changeSuperAdminPassword = function(){
+
+      if($scope.changeSuperAdminPassword.new === $scope.changeSuperAdminPassword.confirm){
+        $scope.settings.set("superAdminPassword", $scope.changeSuperAdminPassword.new);
+        $scope.settings.save(null, {
+          success: function(result) {
+            // Execute any logic that should take place after the object is saved.
+            alert('successfully updated!');
+            getSettings();
+          },
+          error: function(gameScore, error) {
+            // Execute any logic that should take place if the save fails.
+            alert('update error!');
+            // error is a Parse.Error with an error code and message.
+          }
+        });        
+      } else{
+        alert('Password did not match.');
+      }
+
+
+    }    
+
+    $scope.updateEnableUndertimeEdit = function(){
+
+      if($scope.enableUndertimeEdit.value === "true"){
+        $scope.settings.set("enableUndertimeEdit", true);
+      } else{
+        $scope.settings.set("enableUndertimeEdit", false);
+      }
+
+      $scope.settings.save(null, {
+        success: function(result) {
+          // Execute any logic that should take place after the object is saved.
+          alert('successfully updated!');
+          getSettings();
+        },
+        error: function(gameScore, error) {
+          // Execute any logic that should take place if the save fails.
+          alert('update error!');
+          // error is a Parse.Error with an error code and message.
+        }
+      });
+    }
 
     $scope.updateHardwareType = function(){
 

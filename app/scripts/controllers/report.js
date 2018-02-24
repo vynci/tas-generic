@@ -35,6 +35,8 @@ angular.module('sbAdminApp')
       return filter.promise;
     };
 
+    $scope.totalUnderTimeList = {};
+
     $scope.mothSelectNames = monthNames;
 
     $scope.selectedDate = {
@@ -68,6 +70,8 @@ angular.module('sbAdminApp')
     $scope.regularDays = 0;
 
     $scope.batchReportList = [];
+
+    $scope.hideEditModal = false;
 
     var dateRange = {
       min : '',
@@ -202,6 +206,60 @@ angular.module('sbAdminApp')
         }
 
       });
+    }
+
+    $scope.calcRowUndertime = function(row, regularTime, type, index){
+      var result = '-';
+
+      if((row.arrivalAM && row.arrivalAM !== '-') || (row.arrivalPM && row.arrivalPM !== '-')) {
+        var arrivalAM = row.arrivalAM;
+        var arrivalPM = row.arrivalPM;
+        var regularMorningTimeOut = regularTime.morningTimeOut;
+        var regularAfternoonTimeOut = regularTime.afternoonTimeOut;
+        
+        var timeStart = new Date("01/01/2007 " + arrivalAM);
+        var timeEnd = new Date("01/01/2007 " + regularMorningTimeOut.hours + ':' + regularMorningTimeOut.minutes);
+        var timePreEnd = new Date("01/01/2007 " + row.departureAM);
+        var timeDiff = timeEnd - timeStart;
+
+        var timeStartB = new Date("01/01/2007 " + arrivalPM);
+        var timeEndB = new Date("01/01/2007 " + regularAfternoonTimeOut.hours + ':' + regularAfternoonTimeOut.minutes);
+        var timePreEndB = new Date("01/01/2007 " + row.departurePM);
+        var timeDiffB = timeEndB - timeStartB;
+
+        if(timePreEnd < timeEnd) {
+          timeDiff = timePreEnd - timeStart;
+        }
+        if(timePreEndB < timeEndB) {
+          timeDiffB = timePreEndB - timeStartB;
+        }
+
+        timeDiffB = 240 - (timeDiffB / 60000) 
+        timeDiff = 240 - (timeDiff / 60000);
+
+        timeDiff = timeDiff + timeDiffB;
+
+        if(timeDiff < 0) {
+          timeDiff = 0;
+        }
+
+        var timeDiffHours = Math.floor(timeDiff / 60);
+        var timeDiffMinutes = timeDiff % 60;
+
+        if(type === 'hour') {
+          result = timeDiffHours.toString();
+          if(result.length === 1) {
+            result = '0' + result;
+          }
+        } else {
+          result = timeDiffMinutes.toString();
+          if(result.length === 1) {
+            result = '0' + result;
+          }
+        }
+      }
+
+      return result;
     }
 
     $scope.calcRowTotalHours = function(minutes){
@@ -344,8 +402,22 @@ angular.module('sbAdminApp')
     }
 
     $scope.changeReportRow = function(data){
-      console.log(data.id);
-      console.log(data.attributes);
+      if($scope.enableUndertime) {
+        var dateNow = new Date();
+        var selectedDate = new Date($scope.selectedDate.month + ' ' + $scope.selectedDate.year);
+
+        $scope.hideEditModal = true;
+        if($scope.enableUndertimeEdit) {
+          $scope.hideEditModal = false;
+        }
+
+        if(dateNow.getMonth() > selectedDate.getMonth()) {
+          $scope.hideEditModal = false;
+        }
+        if(dateNow.getFullYear() > selectedDate.getFullYear()) {
+          $scope.hideEditModal = false;
+        }
+      }
 
       $scope.secondaryPasswordResponse = '';
       $scope.secondaryPasswordResponseClass = '';
@@ -454,7 +526,6 @@ angular.module('sbAdminApp')
         }
         console.log($scope.newReportData);
       }
-
 
     }
 
@@ -602,6 +673,8 @@ angular.module('sbAdminApp')
         $scope.secondaryInCharge = $scope.settings.get('secondaryInCharge');
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
         $scope.isShowWaterMark = $scope.settings.get('isShowWaterMark');
+        $scope.enableUndertime = $scope.settings.get('enableUndertime');
+        $scope.enableUndertimeEdit = $scope.settings.get('enableUndertimeEdit');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');
         $scope.appLogo = $scope.settings.get('primaryPhoto');
         $scope.companyName = $scope.settings.get('companyName');
@@ -714,6 +787,11 @@ angular.module('sbAdminApp')
             userRegularDays : userRegularDays,
             saturdays : saturdays,
             isCrossDate : isCrossDate || false,
+            totalUnderTime : 0,
+            totalUnderTimeObj : {
+              hours : 0,
+              minutes : 0
+            },
             totalTime : {
               hours : totalTimeHours,
               mins : totalTimeMins
@@ -751,7 +829,6 @@ angular.module('sbAdminApp')
     };
 
     $scope.generateLogs = function(){
-
       var min, max;
 
       if($scope.enableDateRange){

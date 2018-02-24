@@ -95,6 +95,7 @@ angular.module('sbAdminApp')
         $scope.timeSettings.backupTime = $scope.settings.get('backupTime');
 
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
+        $scope.enableUndertime = $scope.settings.get('enableUndertime') || false;
         $scope.isShowWaterMark = $scope.settings.get('isShowWaterMark') || false;
         $scope.enableOvertimeOption = $scope.settings.get('enableOvertimeOption');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');
@@ -118,6 +119,12 @@ angular.module('sbAdminApp')
         } else {
           $scope.isShowWaterMark = "false";
         }        
+
+        if($scope.enableUndertime){
+          $scope.enableUndertime = "true";
+        } else {
+          $scope.enableUndertime = "false";
+        }       
 
         if($scope.isDTRHeaderCustomizable){
           $scope.isDTRHeaderCustomizable = "true";
@@ -354,7 +361,13 @@ angular.module('sbAdminApp')
           settings.set("isShowWaterMark", true);
         } else{
           settings.set("isShowWaterMark", false);
-        }        
+        }       
+
+        if($scope.enableUndertime === "true"){
+          settings.set("enableUndertime", true);
+        } else{
+          settings.set("enableUndertime", false);
+        }         
 
         if($scope.isDTRHeaderCustomizable === "true"){
           settings.set("isDTRHeaderCustomizable", true);
