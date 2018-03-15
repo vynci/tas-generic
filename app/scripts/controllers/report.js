@@ -157,6 +157,62 @@ angular.module('sbAdminApp')
       return result;
     };
 
+    $scope.calcTotalUnderTime = function(batchRow) {
+      var totalTimeDiff = 0;
+      var result = '0 hrs 0 mins';
+      if(batchRow) {
+        batchRow.dataLogs.forEach(function(row){
+          if((row.attributes.arrivalAM && row.attributes.arrivalAM !== '-' && row.attributes.arrivalAM !== 'holiday') || (row.attributes.arrivalPM && row.attributes.arrivalPM !== '-' && row.attributes.arrivalPM !== 'holiday')) {
+            var arrivalAM = row.attributes.arrivalAM;
+            var arrivalPM = row.attributes.arrivalPM;
+            var regularMorningTimeOut = batchRow.regularTime.morningTimeOut;
+            var regularAfternoonTimeOut = batchRow.regularTime.afternoonTimeOut;
+            
+            var timeStart = new Date("01/01/2007 " + arrivalAM);
+            var timeEnd = new Date("01/01/2007 " + regularMorningTimeOut.hours + ':' + regularMorningTimeOut.minutes);
+            var timePreEnd = new Date("01/01/2007 " + row.attributes.departureAM);
+            var timeDiff = timeEnd - timeStart;
+
+            var timeStartB = new Date("01/01/2007 " + arrivalPM);
+            var timeEndB = new Date("01/01/2007 " + regularAfternoonTimeOut.hours + ':' + regularAfternoonTimeOut.minutes);
+            var timePreEndB = new Date("01/01/2007 " + row.attributes.departurePM);
+            var timeDiffB = timeEndB - timeStartB;
+
+            if(timePreEnd < timeEnd) {
+              timeDiff = timePreEnd - timeStart;
+            }
+            if(timePreEndB < timeEndB) {
+              timeDiffB = timePreEndB - timeStartB;
+            }
+
+            if(arrivalAM.indexOf('PM') !== -1) {
+              timeDiff = 240;
+            }            
+
+            timeDiffB = 240 - (timeDiffB / 60000) 
+            timeDiff = 240 - (timeDiff / 60000);
+
+            timeDiff = timeDiff + timeDiffB;
+
+            if(timeDiff < 0) {
+              timeDiff = 0;
+            }
+
+            totalTimeDiff = totalTimeDiff + timeDiff;           
+          }          
+        });
+
+        totalTimeDiff = Math.round(totalTimeDiff);
+
+        var timeDiffHours = Math.floor(totalTimeDiff / 60);
+        var timeDiffMinutes = totalTimeDiff % 60;
+
+        result = timeDiffHours + ' hrs ' + timeDiffMinutes + ' mins';
+      }
+
+      return result;
+    }
+
     $scope.calcUnderTimeHours = function(hour){
 
       var tmp = hour / 60;
@@ -196,6 +252,18 @@ angular.module('sbAdminApp')
       return tmp;
     }
 
+    $scope.formatRegularTime = function(data) {
+      var result = 0;
+
+      if(parseInt(data) > 12) {
+        data = data - 12;       
+      }
+
+      result = data;
+
+      return result;
+    }
+
     $scope.calcTotalTime = function(data){
       var totalTime = 0;
 
@@ -211,7 +279,7 @@ angular.module('sbAdminApp')
     $scope.calcRowUndertime = function(row, regularTime, type, index){
       var result = '-';
 
-      if((row.arrivalAM && row.arrivalAM !== '-') || (row.arrivalPM && row.arrivalPM !== '-')) {
+      if((row.arrivalAM && row.arrivalAM !== '-' && row.arrivalAM !== 'holiday') || (row.arrivalPM && row.arrivalPM !== '-' && row.arrivalPM !== 'holiday')) {
         var arrivalAM = row.arrivalAM;
         var arrivalPM = row.arrivalPM;
         var regularMorningTimeOut = regularTime.morningTimeOut;
@@ -236,6 +304,10 @@ angular.module('sbAdminApp')
 
         timeDiffB = 240 - (timeDiffB / 60000) 
         timeDiff = 240 - (timeDiff / 60000);
+
+        if(arrivalAM.indexOf('PM') !== -1) {
+          timeDiff = 240;
+        }
 
         timeDiff = timeDiff + timeDiffB;
 
@@ -673,6 +745,7 @@ angular.module('sbAdminApp')
         $scope.secondaryInCharge = $scope.settings.get('secondaryInCharge');
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
         $scope.isShowWaterMark = $scope.settings.get('isShowWaterMark');
+        $scope.waterMarkTransparency = $scope.settings.get('waterMarkTransparency') || 0.1;
         $scope.enableUndertime = $scope.settings.get('enableUndertime');
         $scope.enableUndertimeEdit = $scope.settings.get('enableUndertimeEdit');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');

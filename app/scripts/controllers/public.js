@@ -9,8 +9,8 @@
 angular.module('sbAdminApp')
   .controller('PublicCtrl', function($scope, socket, dailyLogService, settingsService, $state, editReportRequests, $window) {
 
-    var monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
 
     var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

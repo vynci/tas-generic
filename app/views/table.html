@@ -220,7 +220,7 @@
                         {{Math.round(batchReport.totalTime.hours)}} hrs {{Math.abs(batchReport.totalTime.mins)}} mins
                       </span>
                       <span ng-if="enableUndertime">
-                        xx
+                        {{calcTotalUnderTime(batchReport)}}
                       </span>
                     </span>
                   </td>
@@ -238,7 +238,7 @@
 
         <div class="dataTable_wrapper" id="printable" style="display:none;">
           <div ng-repeat="batchReport in batchReportList track by $index">
-            <div ng-if="isShowWaterMark" id="background" style="position:absolute; z-index:0; background:white; opacity:0.1; margin-top:100%;">
+            <div ng-if="isShowWaterMark" id="background" ng-style="{opacity: waterMarkTransparency}" style="position:absolute; z-index:0; background:white; margin-top:100%;">
               <p id="bg-text" style="color:lightgrey; font-size:42px; transform:rotate(300deg); -webkit-transform:rotate(300deg);"><img ng-src="{{appLogo}}" style="width: 100px;" alt="">{{companyName}}</p>
             </div>            
             <!-- <br> -->
@@ -281,7 +281,7 @@
                   <div class="col-xs-8"><p style="font-size:75%;"><em>Official hours arrival and departure</em></p></div>
                   <div class="col-xs-4" style="border-bottom: 1px solid; height: 20px; padding-left:0px; padding-right:0px;">
                     <p style="text-align:left; font-size:66%;">
-                      <b>{{batchReport.regularTime.morningTimeIn.hours}}:{{parseMinutes(batchReport.regularTime.morningTimeIn.minutes)}}-{{batchReport.regularTime.morningTimeOut.hours}}:{{parseMinutes(batchReport.regularTime.morningTimeOut.minutes)}} ; {{batchReport.regularTime.afternoonTimeIn.hours}}:{{parseMinutes(batchReport.regularTime.afternoonTimeIn.minutes)}}-{{batchReport.regularTime.afternoonTimeOut.hours}}:{{parseMinutes(batchReport.regularTime.afternoonTimeOut.minutes)}}</b>
+                      <b>{{formatRegularTime(batchReport.regularTime.morningTimeIn.hours)}}:{{parseMinutes(batchReport.regularTime.morningTimeIn.minutes)}}-{{formatRegularTime(batchReport.regularTime.morningTimeOut.hours)}}:{{parseMinutes(batchReport.regularTime.morningTimeOut.minutes)}} ; {{formatRegularTime(batchReport.regularTime.afternoonTimeIn.hours)}}:{{parseMinutes(batchReport.regularTime.afternoonTimeIn.minutes)}}-{{formatRegularTime(batchReport.regularTime.afternoonTimeOut.hours)}}:{{parseMinutes(batchReport.regularTime.afternoonTimeOut.minutes)}}</b>
                     </p>
                   </div>
                 </div>
@@ -360,7 +360,10 @@
                     </tr>
                     <tr ng-hide="displayedCollect.length > 0">
                       <td colspan="5" class="text-right" style="font-size:72% !important; padding:2px; border: 1px solid black !important;">Total</td>
-                      <td colspan="2" class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;"><span ng-show="isShowTotalTime">{{parseTotalInPrint(batchReport.totalTime)}}</span></td>
+                      <td colspan="2" class="text-center" style="font-size:72% !important; padding:2px; border: 1px solid black !important;"><span ng-show="isShowTotalTime">
+                        <span ng-if="!enableUndertime">{{parseTotalInPrint(batchReport.totalTime)}}</span>
+                        <span ng-if="enableUndertime">{{calcTotalUnderTime(batchReport)}}</span>
+                      </span></td>
                     </tr>
                     <!-- <tr ng-hide="<displayedCollect></displayedCollect>ion.length > 0">
                     <td colspan="7" class="text-center">Empty Report List.</td>
@@ -454,7 +457,7 @@
 
         </div> -->
         <div ng-if="hideEditModal">
-          Sorry, you can only edit logs before the current month and year.
+          Sorry, you cannot execute this feature.
         </div>
 
         <div ng-if="!hideEditModal">

@@ -34,7 +34,7 @@ angular.module('sbAdminApp')
     checkSecret();
 
     function checkSecret() {
-      if($location.search().secret === 'alas-admin') {
+      if($location.search().secret === 'alastechadminph') {
         $scope.showChangeSuperAdminPassword = true;
       }      
     }

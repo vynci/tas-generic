@@ -97,6 +97,7 @@ angular.module('sbAdminApp')
         $scope.isShowTotalTime = $scope.settings.get('isShowTotalTime');
         $scope.enableUndertime = $scope.settings.get('enableUndertime') || false;
         $scope.isShowWaterMark = $scope.settings.get('isShowWaterMark') || false;
+        $scope.waterMarkTransparency = parseFloat($scope.settings.get('waterMarkTransparency'))  || 0.1;
         $scope.enableOvertimeOption = $scope.settings.get('enableOvertimeOption');
         $scope.enableDateRange = $scope.settings.get('enableDateRange');
         $scope.enableAlarm = $scope.settings.get('enableAlarm') || false;
@@ -343,7 +344,7 @@ angular.module('sbAdminApp')
 
         settings.id = settingId;
 
-        console.log($scope.companyNameSubtitles);
+        console.log($scope.waterMarkTransparency);
 
         settings.set("companyName", $scope.companyName);
         settings.set("companyNameSubtitle1", $scope.companyNameSubtitles.primary);
@@ -399,6 +400,8 @@ angular.module('sbAdminApp')
           settings.set("isCutOffTime", false);
         }
 
+
+        settings.set("waterMarkTransparency", $scope.waterMarkTransparency.toString());
 
         var tmpHours = $scope.timeSettings.tmpLateTime.hours.toString();
         var tmpMinutes = $scope.timeSettings.tmpLateTime.minutes.toString();
