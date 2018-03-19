@@ -163,19 +163,22 @@ angular.module('sbAdminApp')
       if(batchRow) {
         batchRow.dataLogs.forEach(function(row){
           if((row.attributes.arrivalAM && row.attributes.arrivalAM !== '-' && row.attributes.arrivalAM !== 'holiday') || (row.attributes.arrivalPM && row.attributes.arrivalPM !== '-' && row.attributes.arrivalPM !== 'holiday')) {
-            var arrivalAM = row.attributes.arrivalAM;
-            var arrivalPM = row.attributes.arrivalPM;
+            var arrivalAM = row.attributes.arrivalAM ? row.attributes.arrivalAM : batchRow.regularTime.morningTimeIn.hours + ':' + batchRow.regularTime.morningTimeIn.minutes;
+            var arrivalPM = row.attributes.arrivalPM ? row.attributes.arrivalPM : batchRow.regularTime.afternoonTimeIn.hours + ':' + batchRow.regularTime.afternoonTimeIn.minutes;
+            var departureAM = row.attributes.departureAM ? row.attributes.departureAM : arrivalAM;
+            var departurePM = row.attributes.departurePM ? row.attributes.departurePM : arrivalPM;
+
             var regularMorningTimeOut = batchRow.regularTime.morningTimeOut;
             var regularAfternoonTimeOut = batchRow.regularTime.afternoonTimeOut;
             
             var timeStart = new Date("01/01/2007 " + arrivalAM);
             var timeEnd = new Date("01/01/2007 " + regularMorningTimeOut.hours + ':' + regularMorningTimeOut.minutes);
-            var timePreEnd = new Date("01/01/2007 " + row.attributes.departureAM);
+            var timePreEnd = new Date("01/01/2007 " + departureAM);
             var timeDiff = timeEnd - timeStart;
 
             var timeStartB = new Date("01/01/2007 " + arrivalPM);
             var timeEndB = new Date("01/01/2007 " + regularAfternoonTimeOut.hours + ':' + regularAfternoonTimeOut.minutes);
-            var timePreEndB = new Date("01/01/2007 " + row.attributes.departurePM);
+            var timePreEndB = new Date("01/01/2007 " + departurePM);
             var timeDiffB = timeEndB - timeStartB;
 
             if(timePreEnd < timeEnd) {
@@ -198,7 +201,11 @@ angular.module('sbAdminApp')
               timeDiff = 0;
             }
 
-            totalTimeDiff = totalTimeDiff + timeDiff;           
+            if(isNaN(timeDiff)) {
+              timeDiff = 0;
+            }
+
+            totalTimeDiff = totalTimeDiff + timeDiff;
           }          
         });
 
@@ -278,21 +285,23 @@ angular.module('sbAdminApp')
 
     $scope.calcRowUndertime = function(row, regularTime, type, index){
       var result = '-';
-
       if((row.arrivalAM && row.arrivalAM !== '-' && row.arrivalAM !== 'holiday') || (row.arrivalPM && row.arrivalPM !== '-' && row.arrivalPM !== 'holiday')) {
-        var arrivalAM = row.arrivalAM;
-        var arrivalPM = row.arrivalPM;
+        var arrivalAM = row.arrivalAM ? row.arrivalAM : regularTime.morningTimeIn.hours + ':' + regularTime.morningTimeIn.minutes;
+        var arrivalPM = row.arrivalPM ? row.arrivalPM : regularTime.afternoonTimeIn.hours + ':' + regularTime.afternoonTimeIn.minutes;
+        var departureAM = row.departureAM ? row.departureAM : arrivalAM;
+        var departurePM = row.departurePM ? row.departurePM : arrivalPM;
+
         var regularMorningTimeOut = regularTime.morningTimeOut;
         var regularAfternoonTimeOut = regularTime.afternoonTimeOut;
-        
+
         var timeStart = new Date("01/01/2007 " + arrivalAM);
         var timeEnd = new Date("01/01/2007 " + regularMorningTimeOut.hours + ':' + regularMorningTimeOut.minutes);
-        var timePreEnd = new Date("01/01/2007 " + row.departureAM);
+        var timePreEnd = new Date("01/01/2007 " + departureAM);
         var timeDiff = timeEnd - timeStart;
 
         var timeStartB = new Date("01/01/2007 " + arrivalPM);
         var timeEndB = new Date("01/01/2007 " + regularAfternoonTimeOut.hours + ':' + regularAfternoonTimeOut.minutes);
-        var timePreEndB = new Date("01/01/2007 " + row.departurePM);
+        var timePreEndB = new Date("01/01/2007 " + departurePM);
         var timeDiffB = timeEndB - timeStartB;
 
         if(timePreEnd < timeEnd) {
@@ -329,8 +338,11 @@ angular.module('sbAdminApp')
             result = '0' + result;
           }
         }
-      }
 
+        if(isNaN(result)) {
+          result = '';
+        }
+      }
       return result;
     }
 
