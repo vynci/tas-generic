@@ -173,27 +173,50 @@ angular.module('sbAdminApp')
             
             var timeStart = new Date("01/01/2007 " + arrivalAM);
             var timeEnd = new Date("01/01/2007 " + regularMorningTimeOut.hours + ':' + regularMorningTimeOut.minutes);
+            var regularMorningIn = new Date("01/01/2007 " + batchRow.regularTime.morningTimeIn.hours + ':' + batchRow.regularTime.morningTimeIn.minutes);
             var timePreEnd = new Date("01/01/2007 " + departureAM);
             var timeDiff = timeEnd - timeStart;
 
             var timeStartB = new Date("01/01/2007 " + arrivalPM);
             var timeEndB = new Date("01/01/2007 " + regularAfternoonTimeOut.hours + ':' + regularAfternoonTimeOut.minutes);
+            var regularAfternoonIn = new Date("01/01/2007 " + batchRow.regularTime.afternoonTimeIn.hours + ':' + batchRow.regularTime.afternoonTimeIn.minutes);
             var timePreEndB = new Date("01/01/2007 " + departurePM);
             var timeDiffB = timeEndB - timeStartB;
 
             if(timePreEnd < timeEnd) {
+              var tmp = timeEnd - timePreEnd;
               timeDiff = timePreEnd - timeStart;
+
+              if(tmp >= 0 && timeDiff !== 0 && (timeStart < regularMorningIn)) {
+                timeDiff = timeDiff - tmp;
+      
+                if(regularMorningIn > timeStart) {
+                  timeDiff = 14400000 - tmp;
+                }
+              }
             }
             if(timePreEndB < timeEndB) {
+              var tmp = timeEndB - timePreEndB;
               timeDiffB = timePreEndB - timeStartB;
+              if(tmp >= 0 && timeDiffB !== 0 && (timeStartB < regularAfternoonIn)) {
+                timeDiffB = timeDiffB - tmp;
+              
+                if(regularAfternoonIn > timeStartB) {           
+                  timeDiffB = 14400000 - tmp;
+                }            
+              }               
+            }        
+
+            timeDiffB = 240 - (timeDiffB / 60000) 
+            timeDiff = 240 - (timeDiff / 60000);
+
+            if(timeDiffB < 0) {
+              timeDiffB = 0;
             }
 
             if(arrivalAM.indexOf('PM') !== -1) {
               timeDiff = 240;
-            }            
-
-            timeDiffB = 240 - (timeDiffB / 60000) 
-            timeDiff = 240 - (timeDiff / 60000);
+            }
 
             timeDiff = timeDiff + timeDiffB;
 
@@ -296,23 +319,48 @@ angular.module('sbAdminApp')
 
         var timeStart = new Date("01/01/2007 " + arrivalAM);
         var timeEnd = new Date("01/01/2007 " + regularMorningTimeOut.hours + ':' + regularMorningTimeOut.minutes);
+        var regularMorningIn = new Date("01/01/2007 " + regularTime.morningTimeIn.hours + ':' + regularTime.morningTimeIn.minutes);
         var timePreEnd = new Date("01/01/2007 " + departureAM);
         var timeDiff = timeEnd - timeStart;
 
         var timeStartB = new Date("01/01/2007 " + arrivalPM);
         var timeEndB = new Date("01/01/2007 " + regularAfternoonTimeOut.hours + ':' + regularAfternoonTimeOut.minutes);
+        var regularAfternoonIn = new Date("01/01/2007 " + regularTime.afternoonTimeIn.hours + ':' + regularTime.afternoonTimeIn.minutes);
         var timePreEndB = new Date("01/01/2007 " + departurePM);
         var timeDiffB = timeEndB - timeStartB;
 
         if(timePreEnd < timeEnd) {
+          var tmp = timeEnd - timePreEnd;
+
           timeDiff = timePreEnd - timeStart;
+
+          if(tmp >= 0 && timeDiff !== 0 && (timeStart < regularMorningIn)) {
+            timeDiff = timeDiff - tmp;
+   
+            if(regularMorningIn > timeStart) {
+              timeDiff = 14400000 - tmp;
+            }
+          }         
         }
         if(timePreEndB < timeEndB) {
+          var tmp = timeEndB - timePreEndB;
           timeDiffB = timePreEndB - timeStartB;
+
+          if(tmp >= 0 && timeDiffB !== 0 && (timeStartB < regularAfternoonIn)) {
+            timeDiffB = timeDiffB - tmp;
+           
+            if(regularAfternoonIn > timeStartB) {           
+              timeDiffB = 14400000 - tmp;
+            }            
+          }             
         }
 
         timeDiffB = 240 - (timeDiffB / 60000) 
         timeDiff = 240 - (timeDiff / 60000);
+
+        if(timeDiffB < 0) {
+          timeDiffB = 0;
+        }
 
         if(arrivalAM.indexOf('PM') !== -1) {
           timeDiff = 240;
